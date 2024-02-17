@@ -13,7 +13,7 @@ namespace BasketballManagerAPI.Data {
         public DbSet<Player> Players { get; set; }
         public DbSet<StaffExperience> StaffExperiences { get; set; }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<User> Users { get; set; }
+       // public DbSet<User> Users { get; set; }
         public DbSet<StaffAward> StaffAwards { get; set; }
 
 
@@ -25,13 +25,19 @@ namespace BasketballManagerAPI.Data {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.ApplyConfiguration(new AwardEntityConfiguration());
             modelBuilder.ApplyConfiguration(new CoachEntityConfiguration());
             modelBuilder.ApplyConfiguration(new CoachStatusEntityConfiguration());
             modelBuilder.ApplyConfiguration(new PlayerEntityConfiguration());
-            modelBuilder.Entity<StaffAward>()
-                .HasKey(s => new { s.AwardId, s.StaffId });
+            modelBuilder.ApplyConfiguration(new MatchEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchHistoryEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchEventEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new StaffAwardEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new StaffExperienceEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TeamEntityConfiguration());
+            
+
+               
         }
 
        

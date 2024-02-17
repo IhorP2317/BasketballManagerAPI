@@ -7,20 +7,22 @@ namespace BasketballManagerAPI.Configurations {
         public override void Configure(EntityTypeBuilder<Player> builder)
         {
             base.Configure(builder);
-            builder.HasMany(p => p.MatchHistories)
-                .WithOne(mh => mh.Player)
-                .HasForeignKey(mh => mh.PlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+            builder.Property(p => p.Height)
+                .HasColumnType("decimal(3,1)");
+            builder.Property(p => p.Weight)
+                .HasColumnType("decimal(3,1)");
+            builder.HasIndex(p => new { p.TeamId, p.JerseyNumber }).IsUnique();
+            
             builder.HasOne(p => p.Team)
                 .WithMany(t => t.Players)
                 .HasForeignKey(p => p.TeamId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.Property(p => p.Position)
-                .HasConversion(
-                    p => p.ToString(),
-                    p => (Position)Enum.Parse(typeof(Position), p));
+            builder.HasMany(p => p.PlayerAwards)
+                .WithOne(p => p.Player)
+                .HasForeignKey(p => p.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
 
         }

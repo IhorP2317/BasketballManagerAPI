@@ -1,8 +1,17 @@
 ﻿namespace BasketballManagerAPI.Models {
-    public class MatchEvent {
-        public MatchEventId Id { get; set; }
-        public string Name { get; set; } = null!;
-        public ICollection<MatchHistory> MatchHistories { get; set; } = null!;
+    public enum MatchEvent {
+        OnePointHit = 1,
+        OnePointMiss = 2,
+        TwoPointHit = 3,
+        TwoPointMiss = 4,
+        ThreePointHit = 5,
+        ThreePointMiss = 6,
+        Assist = 7,
+        OffensiveRebound = 8,
+        DefensiveRebound = 9,
+        Steal = 10,
+        Block = 11,
+        Turnover = 12
 
     }
 }

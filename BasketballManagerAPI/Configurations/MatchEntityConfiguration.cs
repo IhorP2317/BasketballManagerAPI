@@ -9,15 +9,13 @@ namespace BasketballManagerAPI.Configurations {
             base.Configure(builder);
             builder.HasOne(m => m.HomeTeam)
                 .WithMany()
-                .HasForeignKey(m => m.HomeTeamId);
+                .HasForeignKey(m => m.HomeTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(m => m.AwayTeam)
                 .WithMany()
-                .HasForeignKey(m => m.AwayTeamId);
+                .HasForeignKey(m => m.AwayTeamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(m => m.MatchHistories)
-                .WithOne(m => m.Match)
-                .HasForeignKey(m => m.MatchId)
-                .OnDelete(DeleteBehavior.Cascade); ;
         }
     }
 }

@@ -6,7 +6,9 @@ namespace BasketballManagerAPI.Models {
     {
         public string Name { get; set; } = null!;
         public DateOnly Date { get; set; }
+        public bool IsIndividualAward { get; set; }
 
-        public ICollection<StaffAward> StaffAwards { get; set; } = null!;
+        public ICollection<CoachAward> CoachAwards { get; set; } = null!;
+        public ICollection<PlayerAward> PlayerAwards { get; set; } = null!;
     }
 }

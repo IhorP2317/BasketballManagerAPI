@@ -1,4 +1,5 @@
 ﻿using BasketballManagerAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BasketballManagerAPI.Configurations {
@@ -6,16 +7,10 @@ namespace BasketballManagerAPI.Configurations {
         public override void Configure(EntityTypeBuilder<Coach> builder)
         {
             base.Configure(builder);
-
-            builder.Property(c => c.Specialty)
-                .HasConversion(
-                    s => s.ToString(),
-                    s => (Specialty)Enum.Parse(typeof(Specialty), s));
-
-            builder.Property(c => c.CoachStatusId)
-                .HasConversion<int>();
-
-            
+            builder.HasOne(c => c.Team)
+                .WithMany( t => t.Coaches)
+                .HasForeignKey(c => c.TeamId)
+                .OnDelete(DeleteBehavior.SetNull);
 
         }
     }

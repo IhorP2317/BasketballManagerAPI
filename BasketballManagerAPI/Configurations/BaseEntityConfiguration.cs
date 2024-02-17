@@ -8,6 +8,8 @@ namespace BasketballManagerAPI.Configurations {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             builder.HasKey(b => b.Id);
+            builder.Property(b => b.Id)
+                .HasDefaultValueSql("NEWID()");
         }
     }
 }

@@ -7,10 +7,7 @@ namespace BasketballManagerAPI.Configurations {
         public override void Configure(EntityTypeBuilder<Team> builder)
         {
             base.Configure(builder);
-            builder.HasOne(t => t.Coach)
-                .WithOne()
-                .HasForeignKey<Team>(t => t.CoachId)
-                .OnDelete(DeleteBehavior.SetNull);
+            builder.HasIndex(t => t.Name).IsUnique();
         }
     }
 }

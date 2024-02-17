@@ -7,9 +7,15 @@ namespace BasketballManagerAPI.Configurations {
         public override void Configure(EntityTypeBuilder<Award> builder)
         {
             base.Configure(builder);
-            builder.HasMany(a => a.StaffAwards)
-                .WithOne(s => s.Award)
-                .HasForeignKey(s => s.AwardId)
+            builder.HasIndex(a => new { a.Name, a.Date }).IsUnique();
+            builder.HasMany(a => a.PlayerAwards)
+                .WithOne(p => p.Award)
+                .HasForeignKey(p => p.AwardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(a => a.CoachAwards)
+                .WithOne(c => c.Award)
+                .HasForeignKey(c => c.AwardId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

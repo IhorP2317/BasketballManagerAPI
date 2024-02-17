@@ -12,7 +12,7 @@ namespace BasketballManagerAPI.Configurations {
                     s => s.ToString(),
                     s => (Specialty)Enum.Parse(typeof(Specialty), s));
 
-            builder.Property(c => c.StatusId)
+            builder.Property(c => c.CoachStatusId)
                 .HasConversion<int>();
 
             

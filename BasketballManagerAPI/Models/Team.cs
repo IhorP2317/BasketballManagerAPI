@@ -8,6 +8,7 @@ namespace BasketballManagerAPI.Models {
         public Coach Coach { get; set; } = null!;
         public ICollection<Player> Players { get; set; } = null!;
         public ICollection<StaffExperience> StaffExperiences { get; set; } = null!;
+        public Match Match { get; set; } = null!;
 
     }
 }

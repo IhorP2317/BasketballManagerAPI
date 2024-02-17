@@ -1,0 +1,6 @@
+@BasketballManagerAPI_HostAddress = http://localhost:5150
+
+GET {{BasketballManagerAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

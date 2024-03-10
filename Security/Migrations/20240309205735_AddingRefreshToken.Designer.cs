@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Security.Data;
 
@@ -11,9 +12,11 @@ using Security.Data;
 namespace Security.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240309205735_AddingRefreshToken")]
+    partial class AddingRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,22 +55,19 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9b9fd04f-208a-474c-8bef-c6759e7b46af"),
-                            ConcurrencyStamp = "cec7dc53-1b6c-4c74-822f-5c544ef40027",
+                            Id = new Guid("0a6624da-7bff-4755-a0f5-581adb304708"),
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("d73fecf9-3a55-4fb6-acbc-eb860d0bd022"),
-                            ConcurrencyStamp = "e2a302a1-5e4d-46b3-83c6-6294aa508079",
+                            Id = new Guid("45414ab6-9dc3-42fa-b89c-e8a77272cecf"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("4f025378-4dd7-4d04-9299-6d42e2fea6cd"),
-                            ConcurrencyStamp = "4f025378-4dd7-4d04-9299-6d42e2fea6cd",
+                            Id = new Guid("1846c596-15ea-4095-8aa5-734ed6a79d0a"),
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -155,13 +155,6 @@ namespace Security.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("0aa8761a-1f16-4440-bcf3-9c17a5cee26f"),
-                            RoleId = new Guid("4f025378-4dd7-4d04-9299-6d42e2fea6cd")
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -258,24 +251,6 @@ namespace Security.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("0aa8761a-1f16-4440-bcf3-9c17a5cee26f"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "65d5db49-251b-4535-9100-c85b4fe403e5",
-                            Email = "mrsplash2356@gmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "Ihor",
-                            LastName = "Paranchuk",
-                            LockoutEnabled = false,
-                            NormalizedUserName = "IPVSPLASH1117@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENNcgL1skYh+AX/60FUc5fI//vkBoiEDB7xm+wzS79RGi7H+9N77gccVnfoj+Rau/w==",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "ipvsplash1117@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

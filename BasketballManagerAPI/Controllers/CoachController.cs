@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using BasketballManagerAPI.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BasketballManagerAPI.Controllers {
     [ApiController]
@@ -19,7 +20,7 @@ namespace BasketballManagerAPI.Controllers {
             _coachService = coachService;
             _teamService = teamService;
         }
-
+       
         [HttpGet("coaches")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CoachResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -28,7 +29,7 @@ namespace BasketballManagerAPI.Controllers {
             var coaches = await _coachService.GetAllCoachesAsync(cancellationToken);
             return coaches.IsNullOrEmpty() ? NoContent() : Ok(coaches);
         }
-
+        
         [HttpGet("{teamId:guid}/coaches")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CoachResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -56,6 +57,7 @@ namespace BasketballManagerAPI.Controllers {
            
             return Ok(coach);
         }
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost("coaches")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CoachResponseDto))]
@@ -66,6 +68,7 @@ namespace BasketballManagerAPI.Controllers {
             var createdPCoach = await _coachService.CreateCoachAsync(coachDto, cancellationToken);
             return Ok(createdPCoach);
         }
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut("coaches/{id}")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -75,6 +78,7 @@ namespace BasketballManagerAPI.Controllers {
             await _coachService.UpdateCoachAsync(id, coachDto, cancellationToken);
             return NoContent();
         }
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("coaches/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

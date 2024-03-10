@@ -3,7 +3,7 @@ using BasketballManagerAPI.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace BasketballManagerAPI.Dto.MatchDto {
-    public class MatchRequestDto : BaseEntityRequestDto, IValidatableObject {
+    public class MatchRequestDto : IValidatableObject {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Location is required!")]
         public string Location { get; set; } = null!;
 

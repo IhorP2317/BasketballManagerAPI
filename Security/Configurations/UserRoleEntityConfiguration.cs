@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Options;
+using Security.Settings;
 
 namespace Security.Configurations {
     public class UserRoleEntityConfiguration:IEntityTypeConfiguration<IdentityUserRole<Guid>> {
-        private Guid _SuperAdminId { get; set; }
-        private Guid _SuperAdminRoleId { get; set; }
+      private readonly SuperAdminSettings _settings;
 
-        public UserRoleEntityConfiguration(Guid SuperAdminId, Guid SuperAdminRoleId) {
-            _SuperAdminId = SuperAdminId;
-            _SuperAdminRoleId = SuperAdminRoleId;
+        public UserRoleEntityConfiguration(SuperAdminSettings settings)
+        {
+            _settings = settings;
         }
         public void Configure(EntityTypeBuilder<IdentityUserRole<Guid>> builder)
         {
            
 
             builder.HasData(new IdentityUserRole<Guid> {
-                UserId = _SuperAdminId,
-                RoleId = _SuperAdminRoleId
+                UserId = Guid.Parse(_settings.Id),
+                RoleId = Guid.Parse(_settings.RoleId)
             });
         }
     }

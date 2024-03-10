@@ -2,7 +2,7 @@
 using BasketballManagerAPI.Helpers.ValidationAttributes;
 
 namespace BasketballManagerAPI.Dto.TicketDto {
-    public class TicketRequestDto:BaseEntityRequestDto {
+    public class TicketRequestDto {
         [NonEmptyGuid(ErrorMessage = "Match id must not be empty!")]
         public Guid MatchId { get; set; }
         [Required(AllowEmptyStrings = false, ErrorMessage = "Section is required!")]

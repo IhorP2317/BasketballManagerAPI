@@ -12,7 +12,7 @@ using Security.Data;
 namespace Security.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240310152043_AddingSuperAdminSeeding")]
+    [Migration("20240310172949_AddingSuperAdminSeeding")]
     partial class AddingSuperAdminSeeding
     {
         /// <inheritdoc />
@@ -55,22 +55,22 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9b9fd04f-208a-474c-8bef-c6759e7b46af"),
-                            ConcurrencyStamp = "cec7dc53-1b6c-4c74-822f-5c544ef40027",
+                            Id = new Guid("3d5b3817-cbe4-4ad3-90be-b7a6b4c40868"),
+                            ConcurrencyStamp = "1bd76001-9027-4aff-bfb7-546494fd30e1",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("d73fecf9-3a55-4fb6-acbc-eb860d0bd022"),
-                            ConcurrencyStamp = "e2a302a1-5e4d-46b3-83c6-6294aa508079",
+                            Id = new Guid("cc03dd56-1825-454a-8453-997df48d036e"),
+                            ConcurrencyStamp = "e416fede-f9db-44e0-afca-c1a59fbb214d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("4f025378-4dd7-4d04-9299-6d42e2fea6cd"),
-                            ConcurrencyStamp = "4f025378-4dd7-4d04-9299-6d42e2fea6cd",
+                            Id = new Guid("dc7c93de-93d5-4ef6-8d02-0901f4089ead"),
+                            ConcurrencyStamp = "dc7c93de-93d5-4ef6-8d02-0901f4089ead",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -162,8 +162,8 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("0aa8761a-1f16-4440-bcf3-9c17a5cee26f"),
-                            RoleId = new Guid("4f025378-4dd7-4d04-9299-6d42e2fea6cd")
+                            UserId = new Guid("226b1dad-0065-44c6-acef-93186e7cd0f2"),
+                            RoleId = new Guid("dc7c93de-93d5-4ef6-8d02-0901f4089ead")
                         });
                 });
 
@@ -265,17 +265,19 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0aa8761a-1f16-4440-bcf3-9c17a5cee26f"),
+                            Id = new Guid("226b1dad-0065-44c6-acef-93186e7cd0f2"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "65d5db49-251b-4535-9100-c85b4fe403e5",
+                            ConcurrencyStamp = "514d0db2-9519-4521-8b3f-585a278a53b4",
                             Email = "mrsplash2356@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Ihor",
                             LastName = "Paranchuk",
                             LockoutEnabled = false,
+                            NormalizedEmail = "MRSPLASH2356@GMAIL.COM",
                             NormalizedUserName = "IPVSPLASH1117@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENNcgL1skYh+AX/60FUc5fI//vkBoiEDB7xm+wzS79RGi7H+9N77gccVnfoj+Rau/w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA6XOA6Giaarq51bg0Jcc9Y+9VtnCDrIfWdt/Xiskn8xNOHUtPWP3MdHzHdk6PaLCA==",
                             PhoneNumberConfirmed = false,
+                            SecurityStamp = "9b1b5eae-0a98-40b0-9607-bbedb9f4ef81",
                             TwoFactorEnabled = false,
                             UserName = "ipvsplash1117@gmail.com"
                         });

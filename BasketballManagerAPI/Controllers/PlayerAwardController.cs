@@ -3,6 +3,7 @@ using BasketballManagerAPI.Dto.PlayerDto;
 using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Services.Implementations;
 using BasketballManagerAPI.Services.Interfeces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -35,6 +36,7 @@ namespace BasketballManagerAPI.Controllers {
             return Ok(award);
         }
 
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost("{id:guid}/awards")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PlayerResponseDto))]
@@ -48,6 +50,7 @@ namespace BasketballManagerAPI.Controllers {
             return Ok(createdAward);
 
         }
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut("awards/{id:guid}")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -61,7 +64,7 @@ namespace BasketballManagerAPI.Controllers {
             return NoContent();
 
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("{playerId:guid}/awards/{awardId:guid}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAwardAsync([FromRoute] Guid playerId, [FromRoute] Guid awardId,

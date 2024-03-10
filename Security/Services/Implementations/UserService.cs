@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Security.Services.Implementations {
-    public class UserService:IUserService{
+    public class UserService:IAuthService{
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenGenerator _tokenGenerator;

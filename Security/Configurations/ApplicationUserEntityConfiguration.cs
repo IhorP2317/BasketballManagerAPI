@@ -1,32 +1,36 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Options;
 using Security.Models;
+using Security.Settings;
 
 namespace Security.Configurations {
     public class ApplicationUserEntityConfiguration: IEntityTypeConfiguration<ApplicationUser> {
-        private Guid _SuperAdminId { get; set; }
+       private readonly SuperAdminSettings _settings;
 
-        public ApplicationUserEntityConfiguration(Guid SuperAdminId)
+        public ApplicationUserEntityConfiguration(SuperAdminSettings  settings)
         {
-            _SuperAdminId = SuperAdminId;
+           _settings = settings;
         }
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
            
 
             var appUser = new ApplicationUser {
-                Id = _SuperAdminId,
-                Email = "mrsplash2356@gmail.com",
+                Id =Guid.Parse( _settings.Id),
+                Email = _settings.Email,
+                NormalizedEmail =_settings.Email.ToUpper(),
                 EmailConfirmed = true,
-                FirstName = "Ihor",
-                LastName = "Paranchuk",
-                UserName = "ipvsplash1117@gmail.com",
-                NormalizedUserName = "IPVSPLASH1117@GMAIL.COM"
+                FirstName = _settings.FirstName,
+                LastName = _settings.LastName,
+                UserName = _settings.UserName,
+                NormalizedUserName = _settings.UserName.ToUpper(),
+                SecurityStamp = Guid.NewGuid().ToString("D"),
             };
 
             PasswordHasher<ApplicationUser> ph = new PasswordHasher<ApplicationUser>();
-            appUser.PasswordHash = ph.HashPassword(appUser, "2356_Sasa");
+            appUser.PasswordHash = ph.HashPassword(appUser, _settings.Password);
 
             builder.HasData(appUser);
         }

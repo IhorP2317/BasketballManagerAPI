@@ -2,6 +2,7 @@
 using BasketballManagerAPI.Dto.TeamDto;
 using BasketballManagerAPI.Models;
 using BasketballManagerAPI.Services.Interfeces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -69,7 +70,7 @@ namespace BasketballManagerAPI.Controllers {
 
             return Ok(team);
         }
-        
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TeamResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -80,7 +81,7 @@ namespace BasketballManagerAPI.Controllers {
             var createdPlayer = await _teamService.CreateTeamAsync(teamDto, cancellationToken);
             return Ok(createdPlayer);
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -95,7 +96,7 @@ namespace BasketballManagerAPI.Controllers {
             return NoContent();
 
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

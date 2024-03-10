@@ -14,10 +14,13 @@ namespace Security.Extensions {
     public static class SecurityServiceRegistration {
         public static void RegisterSecurityServices(this IServiceCollection services, IConfiguration configuration) {
             services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
+            services.Configure<SuperAdminSettings>(configuration.GetSection("SuperAdminSettings"));
+
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, UserService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

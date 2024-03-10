@@ -1,5 +1,6 @@
 ﻿using BasketballManagerAPI.Configurations;
 using BasketballManagerAPI.Models;
+using BasketballManagerAPI.Services.Interfeces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BasketballManagerAPI.Data {
@@ -19,12 +20,12 @@ namespace BasketballManagerAPI.Data {
 
         public DbSet<Ticket> Tickets { get; set; }
 
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
+        private readonly ICurrentUserService _currentUserService;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService) : base(options) {
+            _currentUserService = currentUserService;
             
         }
-        public ApplicationDbContext() {
-        }
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -49,11 +50,11 @@ namespace BasketballManagerAPI.Data {
            return await SaveAllChangesAsync(cancellationToken);
         }
 
-        private async Task<int> SaveAllChangesAsync(CancellationToken cancellationToken) {
-   
-            var matchesToRecalculate = DetectMatchesToRecalculate();
+        private async Task<int> SaveAllChangesAsync(CancellationToken cancellationToken)
+        {
+            OnBeforeSaving();
 
-        
+            var matchesToRecalculate = DetectMatchesToRecalculate();
             var saveResult = await base.SaveChangesAsync(cancellationToken);
 
             await RecalculateMatchScoresAsync(matchesToRecalculate, cancellationToken);
@@ -64,6 +65,27 @@ namespace BasketballManagerAPI.Data {
             }
 
             return saveResult;
+        }
+        private void OnBeforeSaving() {
+            var entries = ChangeTracker.Entries();
+
+            foreach (var entry in entries) {
+                if (entry.Entity is BaseEntity baseEntity) {
+                    switch (entry.State) {
+                        case EntityState.Modified:
+                            baseEntity.ModifiedTime = DateTime.Now;
+                            baseEntity.ModifiedById = Guid.Parse(_currentUserService.UserId);
+                            break;
+
+                        case EntityState.Added:
+                            baseEntity.CreatedTime = DateTime.Now;
+                            baseEntity.CreatedById = Guid.Parse(_currentUserService.UserId);
+                            if (baseEntity.Id == default)
+                                baseEntity.Id = Guid.NewGuid();
+                            break;
+                    }
+                }
+            }
         }
 
         private HashSet<Guid> DetectMatchesToRecalculate() {

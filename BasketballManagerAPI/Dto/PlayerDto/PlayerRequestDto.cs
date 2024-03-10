@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using BasketballManagerAPI.Helpers.ValidationAttributes;
 
 namespace BasketballManagerAPI.Dto.PlayerDto {
-    public class PlayerRequestDto: BaseEntityRequestDto {
+    public class PlayerRequestDto {
         [Required(AllowEmptyStrings = false,ErrorMessage = "Last name is required!")]
         public string LastName { get; set; } = null!;
         [Required(AllowEmptyStrings = false, ErrorMessage = "First name is required!")]

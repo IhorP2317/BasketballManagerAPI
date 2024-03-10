@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace BasketballManagerAPI.Dto.ExperienceDto {
-    public class StaffExperienceRequestDto:BaseEntityRequestDto {
+    public class StaffExperienceRequestDto {
         [NonEmptyGuid(ErrorMessage = "Staff ID must be a non-empty GUID.")]
         public Guid StaffId { get; set; }
         [NonEmptyGuid(ErrorMessage = "Team ID must be a non-empty GUID.")]

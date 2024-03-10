@@ -17,20 +17,24 @@ namespace BasketballManagerAPI.Extensions {
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSwaggerGen();
+            serviceCollection.AddAutoMapper(typeof(Program).Assembly);
+            serviceCollection.AddHttpContextAccessor();
             serviceCollection.AddScoped<ITeamService, TeamService>();
             serviceCollection.AddScoped<IPlayerService, PlayerService>();
             serviceCollection.AddScoped<ICoachService, CoachService>();
             serviceCollection.AddScoped<IMatchService, MatchService>();
             serviceCollection.AddScoped<IStatisticService, StatisticService>();
             serviceCollection.AddScoped<IAwardService, PlayerAwardService>();
-            serviceCollection.AddAutoMapper(typeof(Program).Assembly);
+            serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
+           
 
         }
         public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration) {
-            services.AddAuthentication(cfg =>
+            services.AddAuthentication(options =>
                 {
-                    cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options => {
                     options.RequireHttpsMetadata = false;

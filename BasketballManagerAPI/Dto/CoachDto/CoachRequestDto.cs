@@ -3,7 +3,7 @@ using BasketballManagerAPI.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace BasketballManagerAPI.Dto.CoachDto {
-    public class CoachRequestDto:BaseEntityRequestDto {
+    public class CoachRequestDto {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Last name is required!")]
         public string LastName { get; set; } = null!;
         [Required(AllowEmptyStrings = false, ErrorMessage = "First name is required!")]

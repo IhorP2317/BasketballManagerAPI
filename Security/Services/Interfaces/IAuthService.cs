@@ -2,7 +2,7 @@
 using System.Threading;
 
 namespace Security.Services.Interfaces {
-    public interface IUserService {
+    public interface IAuthService {
 
         Task<UserResponseDto> CreateUserAsync(UserSignUpDto userDto);
         Task<TokenDto> LoginAsync(UserLoginDto userDto);

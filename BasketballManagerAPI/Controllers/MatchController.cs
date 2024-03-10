@@ -5,6 +5,7 @@ using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Helpers;
 using BasketballManagerAPI.Services.Implementations;
 using BasketballManagerAPI.Services.Interfeces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -61,7 +62,7 @@ namespace BasketballManagerAPI.Controllers {
                 return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
             
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MatchResponseDto))]
@@ -73,7 +74,7 @@ namespace BasketballManagerAPI.Controllers {
             var createdMatch = await _matchService.CreateMatchAsync(matchDto, cancellationToken);
             return Ok(createdMatch);
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut("{id}")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -86,7 +87,7 @@ namespace BasketballManagerAPI.Controllers {
             return NoContent();
 
         }
-
+        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

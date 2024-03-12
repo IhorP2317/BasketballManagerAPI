@@ -15,12 +15,13 @@ namespace Security.Extensions {
         public static void RegisterSecurityServices(this IServiceCollection services, IConfiguration configuration) {
             services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
             services.Configure<SuperAdminSettings>(configuration.GetSection("SuperAdminSettings"));
-
+            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IAuthService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

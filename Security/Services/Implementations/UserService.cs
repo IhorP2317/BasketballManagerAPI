@@ -16,14 +16,17 @@ namespace Security.Services.Implementations {
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenGenerator _tokenGenerator;
+        private readonly IEmailService _emailService;
         private readonly ApplicationDbContext _context;
         private readonly AuthSettings _authSettings;
-        public UserService(IMapper mapper, UserManager<ApplicationUser> userManager, ApplicationDbContext context, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings) {
+
+        public UserService(IMapper mapper, UserManager<ApplicationUser> userManager, ApplicationDbContext context, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings, IEmailService emailService) {
             _mapper = mapper;
             _userManager = userManager;
             _context = context;
             _tokenGenerator = tokenGenerator;
             _authSettings = authSettings.Value;
+            _emailService = emailService;
         }
 
         public async Task<UserResponseDto> CreateUserAsync(UserSignUpDto userDto)
@@ -41,7 +44,10 @@ namespace Security.Services.Implementations {
                 var addedRole = await _userManager.AddToRoleAsync(createdUser, "User");
                 if (!addedRole.Succeeded)
                     throw new AuthException("Could not give user role", StatusCodes.Status409Conflict);
-                return _mapper.Map<UserResponseDto>(createdUser);
+                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _emailService.SendEmail(user.Email, user.Id.ToString(), emailConfirmationToken);
+
+            return _mapper.Map<UserResponseDto>(createdUser);
         }
 
         public async Task<TokenDto> LoginAsync(UserLoginDto userDto)
@@ -83,6 +89,12 @@ namespace Security.Services.Implementations {
                 RefreshToken = user.RefreshToken
             };
         }
+        public async Task<bool> VerifyEmailAsync(Guid userId, string confirmationToken) {
+            confirmationToken = confirmationToken.Replace(' ', '+');
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
+            return result.Succeeded;
+        }
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token) {
             var tokenValidationParameters = new TokenValidationParameters {
                 ValidateAudience = false,
@@ -111,9 +123,6 @@ namespace Security.Services.Implementations {
             throw new NotImplementedException();
         }
 
-        public Task<bool> VerifyEmailAsync(Guid userId, string code, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

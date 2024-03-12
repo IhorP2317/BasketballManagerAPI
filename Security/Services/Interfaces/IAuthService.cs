@@ -7,6 +7,6 @@ namespace Security.Services.Interfaces {
         Task<UserResponseDto> CreateUserAsync(UserSignUpDto userDto);
         Task<TokenDto> LoginAsync(UserLoginDto userDto);
         Task<TokenDto> RefreshAccessTokenAsync(TokenDto tokenDto);
-
+        Task<bool> VerifyEmailAsync(Guid userId, string confirmationToken);
     }
 }

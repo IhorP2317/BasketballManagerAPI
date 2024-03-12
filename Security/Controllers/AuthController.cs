@@ -44,7 +44,16 @@ namespace Security.Controllers {
         {
             var token = await _userService.RefreshAccessTokenAsync(tokenDto);
             return Ok(token);
+        }
 
+        [HttpGet("email/verification")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> VerifyEmail([FromQuery] Guid userId, [FromQuery] string token)
+        {
+            var result = await _userService.VerifyEmailAsync(userId, token);
+            return result ? Ok() : BadRequest();
         }
 
 

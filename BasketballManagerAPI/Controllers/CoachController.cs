@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using BasketballManagerAPI.Filters;
+using BasketballManagerAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BasketballManagerAPI.Controllers {
@@ -22,12 +23,12 @@ namespace BasketballManagerAPI.Controllers {
         }
        
         [HttpGet("coaches")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CoachResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<CoachResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllCoachesAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllCoachesAsync([FromQuery] CoachFiltersDto coachFiltersDto, CancellationToken cancellationToken)
         {
-            var coaches = await _coachService.GetAllCoachesAsync(cancellationToken);
-            return coaches.IsNullOrEmpty() ? NoContent() : Ok(coaches);
+            var coaches = await _coachService.GetAllCoachesAsync(coachFiltersDto,cancellationToken);
+            return coaches.Items.IsNullOrEmpty() ? NoContent() : Ok(coaches);
         }
         
         [HttpGet("{teamId:guid}/coaches")]
@@ -50,7 +51,7 @@ namespace BasketballManagerAPI.Controllers {
             return Ok(coach);
         }
         [HttpGet("coaches/{id:guid}/details")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoachResponseDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoachDetailDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCoachDetailAsync([FromRoute] Guid id, CancellationToken cancellationToken) {
             var coach = await _coachService.GetCoachDetailAsync(id, cancellationToken);
@@ -73,10 +74,42 @@ namespace BasketballManagerAPI.Controllers {
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-        public async Task<IActionResult> UpdateCoachAsync([FromRoute] Guid id, CoachRequestDto coachDto, CancellationToken cancellationToken) {
+        public async Task<IActionResult> UpdateCoachAsync([FromRoute] Guid id, CoachUpdateDto coachDto, CancellationToken cancellationToken) {
             await _coachService.UpdateCoachAsync(id, coachDto, cancellationToken);
             return NoContent();
+        }
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("coaches/{id}/team")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        public async Task<IActionResult> UpdateCoachTeamAsync([FromRoute] Guid id, CoachUpdateTeamDto coachDto, CancellationToken cancellationToken) {
+            await _coachService.UpdateCoachTeamAsync(id, coachDto.NewTeamId, cancellationToken);
+            return NoContent();
+        }
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("coaches/{id}/avatar")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateCoachAvatarAsync([FromRoute] Guid id,
+            [FromForm] IFormFile picture,
+            CancellationToken cancellationToken) {
+            await _coachService.UpdateCoachAvatarAsync(id, picture, cancellationToken);
+            return NoContent();
+
+        }
+
+        [HttpGet("coaches/{id}/avatar")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DownloadCoachAvatarAsync([FromRoute] Guid id,
+            CancellationToken cancellationToken) {
+            var fileDto = await _coachService.DownloadCoachAvatarAsync(id, cancellationToken);
+            return File(fileDto.Content, fileDto.MimeType, fileDto.FileName);
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("coaches/{id}")]

@@ -58,7 +58,7 @@ namespace BasketballManagerAPI.Controllers {
             CancellationToken cancellationToken) {
             
             var statistics =
-                await _statisticService.GetAllMatchStatisticAsync(id, matchStatisticFiltersDto, cancellationToken);
+                await _statisticService.GetAllPlayersStatisticByMatchAsync(id, matchStatisticFiltersDto, cancellationToken);
                 return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
             
         }

@@ -22,11 +22,11 @@ namespace BasketballManagerAPI.Controllers {
             _statisticService = statisticService;
         }
 
-        [HttpPost("get")]
+        [HttpGet]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<PlayerResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllPlayersAsync([FromBody] PlayerFiltersDto playerFiltersDto, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPlayersAsync([FromQuery] PlayerFiltersDto playerFiltersDto, CancellationToken cancellationToken)
         {
             
             var players = await _playerService.GetAllPlayersAsync(playerFiltersDto, cancellationToken);
@@ -63,42 +63,69 @@ namespace BasketballManagerAPI.Controllers {
             CancellationToken cancellationToken) {
          
            var statistics = await _statisticService.GetAllAnnuallyStatisticAsync(id, statisticFiltersDto, cancellationToken);
-           if (statistics.IsNullOrEmpty())
-               return NoContent();
-           return Ok(statistics);
+
+           return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics);
 
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PlayerResponseDto))]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PlayerDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         public async Task<IActionResult> CreatePlayerAsync([FromBody] PlayerRequestDto playerDto,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var createdPlayer = await _playerService.CreatePlayerAsync(playerDto, cancellationToken);
             return Ok(createdPlayer);
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut("{id}")]
+        [ValidateModel]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-        public async Task<IActionResult> UpdatePlayerAsync([FromRoute] Guid id, PlayerRequestDto playerDto, CancellationToken cancellationToken) {
+        public async Task<IActionResult> UpdatePlayerAsync([FromRoute] Guid id, PlayerUpdateDto playerDto, CancellationToken cancellationToken) {
 
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
-
-            if (!await _playerService.IsPlayerExistAsync(id, cancellationToken))
-                return NotFound();
             await _playerService.UpdatePlayerAsync(id, playerDto, cancellationToken);
             return NoContent();
         }
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("{id}/team")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        public async Task<IActionResult> UpdatePlayerTeamAsync([FromRoute] Guid id, PlayerUpdateTeamDto playerDto, CancellationToken cancellationToken) {
+
+            await _playerService.UpdatePlayerTeamAsync(id, playerDto.NewTeamId, cancellationToken);
+            return NoContent();
+        }
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("{id}/avatar")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdatePlayerAvatarAsync([FromRoute] Guid id,
+            [FromForm] IFormFile picture,
+            CancellationToken cancellationToken)
+        {
+            await _playerService.UpdatePlayerAvatarAsync(id, picture, cancellationToken);
+            return NoContent();
+
+        }
+
+        [HttpGet("{id}/avatar")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DownloadPlayerAvatarAsync([FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var fileDto = await _playerService.DownloadPlayerAvatarAsync(id, cancellationToken);
+            return File(fileDto.Content, fileDto.MimeType, fileDto.FileName);
+        }
+       
+
         [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

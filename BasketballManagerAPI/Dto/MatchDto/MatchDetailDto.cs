@@ -6,7 +6,7 @@ using BasketballManagerAPI.Models;
 namespace BasketballManagerAPI.Dto.MatchDto {
     public class MatchDetailDto:BaseEntityResponseDto {
         public string Location { get; set; } = null!;
-        public DateTime StarTime { get; set; }
+        public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public Guid HomeTeamId { get; set; }
         public TeamResponseDto HomeTeam { get; set; } = null!;

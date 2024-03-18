@@ -35,8 +35,13 @@ namespace BasketballManagerAPI.Filters {
                     Status = StatusCodes.Status404NotFound,
                     Detail = notFoundEx.Message
                 },
-                DomainException domainEx => new ProblemDetails {
-                    Title = "Domain validation error",
+                DomainUniquenessException domainEx => new ProblemDetails {
+                    Title = "Domain uniqueness validation error",
+                    Status = StatusCodes.Status409Conflict,
+                    Detail = domainEx.Message
+                },
+                DomainLogicException domainEx => new ProblemDetails {
+                    Title = "Domain logic validation error",
                     Status = StatusCodes.Status409Conflict,
                     Detail = domainEx.Message
                 },
@@ -48,7 +53,7 @@ namespace BasketballManagerAPI.Filters {
                 _ => new ProblemDetails {
                     Title = "An unexpected error occurred",
                     Status = StatusCodes.Status500InternalServerError,
-                    Detail = "The server encountered an unexpected condition that prevented it from fulfilling the request."
+                    Detail = exception.Message
                 }
             };
         }

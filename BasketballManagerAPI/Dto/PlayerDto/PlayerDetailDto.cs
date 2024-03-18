@@ -1,6 +1,5 @@
 ﻿using BasketballManagerAPI.Dto.AwardDto;
 using BasketballManagerAPI.Dto.ExperienceDto;
-using BasketballManagerAPI.Dto.PlayerExperienceDto;
 using BasketballManagerAPI.Dto.TeamDto;
 using BasketballManagerAPI.Models;
 
@@ -16,10 +15,8 @@ namespace BasketballManagerAPI.Dto.PlayerDto {
         public int JerseyNumber { get; set; }
         public Guid? TeamId { get; set; }
         public TeamResponseDto Team { get; set; } = null!;
-        public string PhotoUrl { get; set; } = null!;
-        public ICollection<StatisticDto.StatisticDto> Statistics { get; set; } = null!;
-        public ICollection<AwardResponseDto> PlayerAwards { get; set; } = null!;
-        public ICollection<StaffExperienceResponseDto> PlayerExperiences { get; set; } = null!;
+        public string? PhotoPath { get; set; }
+        public ICollection<PlayerExperienceDetailDto> PlayerExperiences { get; set; } = null!;
 
     }
 }

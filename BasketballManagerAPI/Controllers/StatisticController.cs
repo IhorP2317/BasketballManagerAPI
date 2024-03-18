@@ -26,10 +26,7 @@ namespace BasketballManagerAPI.Controllers {
             [FromRoute] int timeUnit, CancellationToken cancellationToken)
         {
             var statistic = await _statisticService.GetStatisticAsync(playerId, matchId, timeUnit, cancellationToken);
-            if (statistic == null)
-            {
-                return NotFound();
-            }
+            
             return Ok(statistic);
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
@@ -55,7 +52,7 @@ namespace BasketballManagerAPI.Controllers {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            if (!await _statisticService.IsStatisticExistAsync(statisticDto.MatchId, statisticDto.PlayerId, statisticDto.TimeUnit.GetValueOrDefault(), cancellationToken))
+            if (!await _statisticService.IsStatisticExistAsync(statisticDto.MatchId, statisticDto.PlayerExperienceId, statisticDto.TimeUnit.GetValueOrDefault(), cancellationToken))
                 return NotFound();
             await _statisticService.UpdateStatisticAsync(statisticDto, cancellationToken);
             return NoContent();

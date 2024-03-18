@@ -2,6 +2,7 @@
     public class PlayerStatisticDto
     {
         public string FullName { get; set; } = null!;
+        public Guid? TeamId { get; set; }
         public int Points { get; set; } = 0;
         public int OnePointShotHit { get; set; } = 0;
         public int OnePointShotMiss { get; set; } = 0;

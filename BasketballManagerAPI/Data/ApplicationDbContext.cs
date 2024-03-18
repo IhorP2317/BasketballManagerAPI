@@ -103,7 +103,8 @@ namespace BasketballManagerAPI.Data {
             foreach (var matchId in matchesToRecalculate) {
                 var match = await Matches
                     .Include(m => m.Statistics)
-                    .ThenInclude(s => s.Player)
+                    .ThenInclude(s => s.PlayerExperience)
+                    .ThenInclude(p => p.Player)
                     .SingleOrDefaultAsync(m => m.Id == matchId, cancellationToken);
 
                 if (match != null) {
@@ -122,11 +123,11 @@ namespace BasketballManagerAPI.Data {
         private void RecalculateMatchScores(Match match) {
 
             match.HomeTeamScore = match.Statistics
-                .Where(s => s.Player.TeamId == match.HomeTeamId)
+                .Where(s => s.PlayerExperience.TeamId == match.HomeTeamId)
                 .Sum(s => CalculateScore(s));
 
             match.AwayTeamScore = match.Statistics
-                .Where(s => s.Player.TeamId == match.AwayTeamId)
+                .Where(s => s.PlayerExperience.TeamId == match.AwayTeamId)
                 .Sum(s => CalculateScore(s));
         }
 

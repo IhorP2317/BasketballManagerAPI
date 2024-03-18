@@ -87,8 +87,8 @@ namespace BasketballManagerAPI.Services.Implementations {
                   && await _teamService.IsTeamExistsAsync(matchDto.HomeTeamId, cancellationToken)))
                 throw new NotFoundException("One of teams in match does not exist!");
             if (DateTime.TryParse(matchDto.StartTime, out DateTime startTime) &&
-                !await IsTeamsAvailableForMatch(matchDto.HomeTeamId, matchDto.AwayTeamId, startTime, cancellationToken)) {
-                throw new DomainException("Match", $"of Home team with id {matchDto.HomeTeamId} " +
+                await IsTeamsUnavailableForMatch(matchDto.HomeTeamId, matchDto.AwayTeamId, startTime, cancellationToken)) {
+                throw new DomainUniquenessException("Match", $"of Home team with id {matchDto.HomeTeamId} " +
                                                    $"or Away Team with id {matchDto.AwayTeamId} and StartTime {matchDto.StartTime} ");
             }
 
@@ -107,9 +107,9 @@ namespace BasketballManagerAPI.Services.Implementations {
                   && await _teamService.IsTeamExistsAsync(matchDto.HomeTeamId, cancellationToken)))
                 throw new NotFoundException("One of teams in match does not exist!");
             if (DateTime.TryParse(matchDto.StartTime, out DateTime startTime) && 
-                !await IsTeamsAvailableForMatch(matchDto.HomeTeamId, matchDto.AwayTeamId, startTime, cancellationToken))
+                await IsTeamsUnavailableForMatch(matchDto.HomeTeamId, matchDto.AwayTeamId, startTime, cancellationToken))
             {
-                throw new DomainException("Match", $"of Home team with id {matchDto.HomeTeamId} " +
+                throw new DomainUniquenessException("Match", $"of Home team with id {matchDto.HomeTeamId} " +
                                                    $"or Away Team with id {matchDto.AwayTeamId} and StartTime {matchDto.StartTime} ");
             }
 
@@ -128,7 +128,7 @@ namespace BasketballManagerAPI.Services.Implementations {
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<bool> IsTeamsAvailableForMatch(Guid homeTeamId, Guid awayTeamId, DateTime startTime, CancellationToken cancellationToken) {
+        private async Task<bool> IsTeamsUnavailableForMatch(Guid homeTeamId, Guid awayTeamId, DateTime startTime, CancellationToken cancellationToken) {
             return await _context.Matches
                 .AnyAsync(m =>
                         m.StartTime == startTime &&

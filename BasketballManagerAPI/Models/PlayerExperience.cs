@@ -6,5 +6,7 @@
         public Team Team { get; set; } = null!;
         public DateOnly StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
+        public ICollection<Statistic> Statistics { get; set; } = null!;
+        public ICollection<PlayerAward> PlayerAwards { get; set; } = null!;
     }
 }

@@ -5,6 +5,7 @@ using BasketballManagerAPI.Services.Implementations;
 using BasketballManagerAPI.Services.Interfeces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -45,6 +46,14 @@ if (app.Environment.IsDevelopment()) {
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseCors("AllowAny");
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions() {
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), app.Configuration["FileStorage:PhysicalFileProviderRoot"])
+    ),
+    RequestPath = new PathString(app.Configuration["FileStorage:RequestPath"])
+});
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

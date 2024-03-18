@@ -51,6 +51,9 @@ namespace BasketballManagerAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("PhotoPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name", "Date")
@@ -96,8 +99,7 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset?>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
+                    b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Specialty")
@@ -118,12 +120,12 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<Guid>("AwardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CoachId")
+                    b.Property<Guid>("CoachExperienceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("AwardId", "CoachId");
+                    b.HasKey("AwardId", "CoachExperienceId");
 
-                    b.HasIndex("CoachId");
+                    b.HasIndex("CoachExperienceId");
 
                     b.ToTable("CoachAwards");
                 });
@@ -155,6 +157,9 @@ namespace BasketballManagerAPI.Migrations
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("TeamId")
                         .HasColumnType("uniqueidentifier");
@@ -261,8 +266,7 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset?>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
+                    b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Position")
@@ -288,12 +292,12 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<Guid>("AwardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PlayerId")
+                    b.Property<Guid>("PlayerExperienceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("AwardId", "PlayerId");
+                    b.HasKey("AwardId", "PlayerExperienceId");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("PlayerExperienceId");
 
                     b.ToTable("PlayerAwards");
                 });
@@ -343,7 +347,7 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PlayerId")
+                    b.Property<Guid>("PlayerExperienceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TimeUnit")
@@ -388,9 +392,9 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<int>("TwoPointShotMissCount")
                         .HasColumnType("int");
 
-                    b.HasKey("MatchId", "PlayerId", "TimeUnit");
+                    b.HasKey("MatchId", "PlayerExperienceId", "TimeUnit");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("PlayerExperienceId");
 
                     b.ToTable("Statistics");
                 });
@@ -408,10 +412,6 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Logo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("ModifiedById")
                         .HasColumnType("uniqueidentifier");
 
@@ -421,6 +421,9 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhotoPath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -546,16 +549,7 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset?>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PhotoUrl")
-                        .IsRequired()
+                    b.Property<string>("PhotoPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
@@ -564,9 +558,6 @@ namespace BasketballManagerAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneNumber")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -590,15 +581,15 @@ namespace BasketballManagerAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BasketballManagerAPI.Models.Coach", "Coach")
+                    b.HasOne("BasketballManagerAPI.Models.CoachExperience", "CoachExperience")
                         .WithMany("CoachAwards")
-                        .HasForeignKey("CoachId")
+                        .HasForeignKey("CoachExperienceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Award");
 
-                    b.Navigation("Coach");
+                    b.Navigation("CoachExperience");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.CoachExperience", b =>
@@ -657,15 +648,15 @@ namespace BasketballManagerAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BasketballManagerAPI.Models.Player", "Player")
+                    b.HasOne("BasketballManagerAPI.Models.PlayerExperience", "PlayerExperience")
                         .WithMany("PlayerAwards")
-                        .HasForeignKey("PlayerId")
+                        .HasForeignKey("PlayerExperienceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Award");
 
-                    b.Navigation("Player");
+                    b.Navigation("PlayerExperience");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.PlayerExperience", b =>
@@ -695,15 +686,15 @@ namespace BasketballManagerAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BasketballManagerAPI.Models.Player", "Player")
+                    b.HasOne("BasketballManagerAPI.Models.PlayerExperience", "PlayerExperience")
                         .WithMany("Statistics")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("PlayerExperienceId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Match");
 
-                    b.Navigation("Player");
+                    b.Navigation("PlayerExperience");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Ticket", b =>
@@ -744,9 +735,12 @@ namespace BasketballManagerAPI.Migrations
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Coach", b =>
                 {
-                    b.Navigation("CoachAwards");
-
                     b.Navigation("CoachExperiences");
+                });
+
+            modelBuilder.Entity("BasketballManagerAPI.Models.CoachExperience", b =>
+                {
+                    b.Navigation("CoachAwards");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Match", b =>
@@ -758,9 +752,12 @@ namespace BasketballManagerAPI.Migrations
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Player", b =>
                 {
-                    b.Navigation("PlayerAwards");
-
                     b.Navigation("PlayerExperiences");
+                });
+
+            modelBuilder.Entity("BasketballManagerAPI.Models.PlayerExperience", b =>
+                {
+                    b.Navigation("PlayerAwards");
 
                     b.Navigation("Statistics");
                 });

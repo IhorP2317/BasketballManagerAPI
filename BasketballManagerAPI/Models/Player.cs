@@ -11,9 +11,7 @@
         public int JerseyNumber { get; set; }
         public Guid? TeamId { get; set; }
         public Team Team { get; set; } = null!;
-        public string PhotoUrl { get; set; } = null!;
-        public ICollection<Statistic> Statistics { get; set; } = null!;
-        public ICollection<PlayerAward> PlayerAwards { get; set; } = null!;
+        public string? PhotoPath { get; set; }
         public ICollection<PlayerExperience> PlayerExperiences { get; set; } = null!;
 
     }

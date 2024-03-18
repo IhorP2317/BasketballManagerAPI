@@ -5,6 +5,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using Security.Services.Interfaces;
 using Security.Settings;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Security.Services.Implementations
@@ -25,23 +26,19 @@ namespace Security.Services.Implementations
             _env = env;
         }
 
-        public async Task<bool> SendEmail(string receiverEmail, string userId, string token) {
-            var scheme = _httpContextAccessor.HttpContext.Request.Scheme;
-            var host = _httpContextAccessor.HttpContext.Request.Host.Value;
-            var verificationUrl = $"{scheme}://{host}/api/auth/email/verification?userId={userId}&token={token}";
+        public async Task<bool> SendEmail(string receiverEmail, string subject, string text) {
+           
 
             try {
-                var basePath = _env.WebRootPath ?? _env.ContentRootPath;
-                var emailTemplatePath = Path.Combine(basePath, "EmailTemplates", "verificationEmailTemplate.html");
-                var emailHtmlContent = await File.ReadAllTextAsync(emailTemplatePath);
-               
-                emailHtmlContent = emailHtmlContent.Replace("{url}", verificationUrl);
+              
 
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse(_mailSettings.SenderMail));
                 email.To.Add(MailboxAddress.Parse(receiverEmail));
-                email.Subject = "Email verification";
-                email.Body = new TextPart(TextFormat.Html) { Text = emailHtmlContent };
+                email.Subject = subject;
+                email.Body = new TextPart(TextFormat.Html) {
+                    Text = text
+                };
 
                 using var smtp = new SmtpClient();
                 await smtp.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, SecureSocketOptions.StartTls);

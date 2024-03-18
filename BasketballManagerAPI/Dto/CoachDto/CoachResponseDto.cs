@@ -1,7 +1,9 @@
 ﻿using BasketballManagerAPI.Models;
 
-namespace BasketballManagerAPI.Dto.CoachDto {
-    public class CoachResponseDto:BaseEntityResponseDto {
+namespace BasketballManagerAPI.Dto.CoachDto
+{
+    public class CoachResponseDto : BaseEntityResponseDto
+    {
         public string LastName { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public DateOnly DateOfBirth { get; set; }
@@ -10,6 +12,6 @@ namespace BasketballManagerAPI.Dto.CoachDto {
 
         public string CoachStatus { get; set; } = null!;
         public string Specialty { get; set; } = null!;
-        public string PhotoUrl { get; set; } = null!;
+        public string? PhotoPath { get; set; } 
     }
 }

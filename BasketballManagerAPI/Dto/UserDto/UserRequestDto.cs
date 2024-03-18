@@ -11,12 +11,7 @@ namespace BasketballManagerAPI.Dto.UserDto {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Email Address is required!")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; } = null!;
-        public string Password { get; set; } = null!;
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Phone number is required!")]
-        [Phone(ErrorMessage = "Invalid Phone number!")]
-        public string PhoneNumber { get; set; } = null!;
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Photo is required!")]
-        public string PhotoUrl { get; set; } = null!;
+        
         [EnumValue(typeof(Role))]
         public string Role { get; set; } = null!;
         

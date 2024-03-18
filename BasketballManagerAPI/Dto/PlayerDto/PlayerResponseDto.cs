@@ -13,7 +13,7 @@ namespace BasketballManagerAPI.Dto.PlayerDto {
         public int JerseyNumber { get; set; }
         public string TeamName { get; set; } = null!;
         public Guid? TeamId { get; set; }
-        public string PhotoUrl { get; set; } = null!;
+        public string? PhotoPath { get; set; } = null!;
 
     }
 }

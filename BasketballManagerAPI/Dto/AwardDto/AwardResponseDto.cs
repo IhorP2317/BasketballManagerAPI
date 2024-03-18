@@ -5,6 +5,7 @@ namespace BasketballManagerAPI.Dto.AwardDto {
         public string Name { get; set; } = null!;
         public DateOnly Date { get; set; }
         public bool IsIndividualAward { get; set; }
+        public string? PhotoPath { get; set; }
 
     }
 }

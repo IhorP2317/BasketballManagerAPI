@@ -10,7 +10,6 @@ namespace BasketballManagerAPI.Configurations
         {
             base.Configure(builder);
             builder.HasIndex(u => u.Email).IsUnique();
-            builder.HasIndex(u => u.PhoneNumber).IsUnique();
             builder.Property(u => u.Balance)
                 .HasColumnType("decimal(10,2)");
 

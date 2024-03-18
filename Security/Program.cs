@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Security.Data;
 using Security.Extensions;
 using Serilog;
@@ -15,6 +16,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 // Add services to the container.
 builder.Services.RegisterSecurityServices(builder.Configuration);
+builder.Services.ConfigureAuth(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +41,8 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseCors("AllowAny");
 
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

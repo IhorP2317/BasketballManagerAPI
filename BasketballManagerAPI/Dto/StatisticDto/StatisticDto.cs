@@ -9,7 +9,7 @@ namespace BasketballManagerAPI.Dto.StatisticDto {
         [NonEmptyGuid(ErrorMessage = "Match Id is Required!")]
         public Guid MatchId { get; set; }
         [NonEmptyGuid(ErrorMessage = "Match Id is Required!")]
-        public Guid PlayerId { get; set; }
+        public Guid PlayerExperienceId { get; set; }
         [Required(ErrorMessage = "Time Unit is Required!")]
         [Range(1, int.MaxValue, ErrorMessage = "Time unit must be greater than 0")]
         public int? TimeUnit { get; set; }

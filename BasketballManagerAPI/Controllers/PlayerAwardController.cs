@@ -2,6 +2,7 @@
 using BasketballManagerAPI.Dto.PlayerDto;
 using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Services.Implementations;
+using BasketballManagerAPI.Services.Interfaces;
 using BasketballManagerAPI.Services.Interfeces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,35 +10,35 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BasketballManagerAPI.Controllers {
     [ApiController]
-    [Route("api/players/")]
+    [Route("api/")]
     public class PlayerAwardController:ControllerBase {
-        private readonly IAwardService _awardService;
+        private readonly IStaffAwardService _playerAwardService;
 
 
-        public PlayerAwardController(IAwardService awardService)
+        public PlayerAwardController( IStaffAwardServiceFactory staffAwardServiceFactory)
         {
-            _awardService = awardService;
+            _playerAwardService = staffAwardServiceFactory.CreatePlayerAwardService();
         }
-        [HttpGet("{id:guid}/awards")]
+        [HttpGet("players/{id:guid}/experiences/awards")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AwardResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllPlayerAwardsAsync([FromRoute] Guid id,
             CancellationToken cancellationToken)
         {
-            var awards = await _awardService.GetAllAwardsByStaffIdAsync(id, cancellationToken);
+            var awards = await _playerAwardService.GetAllAwardsByStaffIdAsync(id, cancellationToken);
             return awards.IsNullOrEmpty() ? NoContent() : Ok(awards);
         }
-        [HttpGet("{playerId:guid}/awards/{awardId:guid}")]
+        [HttpGet("players/experiences/{playerExperienceId:guid}/awards/{awardId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AwardResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAwardAsync([FromRoute] Guid playerId, [FromRoute] Guid awardId,CancellationToken cancellationToken) {
-            var award = await _awardService.GetAwardAsync(playerId, awardId, cancellationToken );
+        public async Task<IActionResult> GetAwardAsync([FromRoute] Guid playerExperienceId, [FromRoute] Guid awardId,CancellationToken cancellationToken) {
+            var award = await _playerAwardService.GetAwardAsync(playerExperienceId, awardId, cancellationToken );
             return Ok(award);
         }
 
         [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPost("{id:guid}/awards")]
+        [HttpPost("players/experiences/{id:guid}/awards")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PlayerResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -46,31 +47,17 @@ namespace BasketballManagerAPI.Controllers {
         public async Task<IActionResult> CreateAwardAsync([FromRoute] Guid id,
             [FromBody] AwardRequestDto awardRequestDto, CancellationToken cancellationToken)
         {
-            var createdAward = await _awardService.CreateAwardAsync(id, awardRequestDto, cancellationToken);
+            var createdAward = await _playerAwardService.CreateAwardAsync(id, awardRequestDto, cancellationToken);
             return Ok(createdAward);
 
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPut("awards/{id:guid}")]
-        [ValidateModel]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [HttpDelete("players/experiences/{id:guid}/awards/{awardId:guid}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-
-        public async Task<IActionResult> UpdateAwardAsync([FromRoute] Guid id,
-            [FromBody] AwardUpdateDto awardUpdateDto, CancellationToken cancellationToken) {
-            await _awardService.UpdateAwardAsync(id, awardUpdateDto, cancellationToken);
-            return NoContent();
-
-        }
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpDelete("{playerId:guid}/awards/{awardId:guid}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAwardAsync([FromRoute] Guid playerId, [FromRoute] Guid awardId,
+        public async Task<IActionResult> DeleteAwardAsync([FromRoute] Guid id, [FromRoute] Guid awardId,
             CancellationToken cancellationToken)
         {
-            await _awardService.DeleteAwardAsync(playerId, awardId, cancellationToken);
+            await _playerAwardService.DeleteAwardAsync(id, awardId, cancellationToken);
             return NoContent();
         }
 

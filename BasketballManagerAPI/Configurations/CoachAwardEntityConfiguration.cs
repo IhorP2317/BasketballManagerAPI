@@ -6,10 +6,10 @@ namespace BasketballManagerAPI.Configurations {
     public class CoachAwardEntityConfiguration:IEntityTypeConfiguration<CoachAward> {
         public virtual void Configure(EntityTypeBuilder<CoachAward> builder)
         {
-            builder.HasKey(c => new { c.AwardId, c.CoachId });
-            builder.HasOne(c => c.Coach)
+            builder.HasKey(c => new { c.AwardId, c.CoachExperienceId });
+            builder.HasOne(c => c.CoachExperience)
                 .WithMany(c => c.CoachAwards)
-                .HasForeignKey(c => c.CoachId)
+                .HasForeignKey(c => c.CoachExperienceId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

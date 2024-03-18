@@ -15,6 +15,10 @@ namespace BasketballManagerAPI.Helpers.ValidationAttributes
 
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
+            if (value == null)
+            {
+                return ValidationResult.Success;
+            }
             if (value is string dateString)
             {
                 if (DateTime.TryParseExact(dateString, _dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))

@@ -10,7 +10,6 @@ namespace BasketballManagerAPI.Dto.MatchDto {
         [Required(ErrorMessage = "Start Time is required.")]
         [DateTimeFormat("yyyy-MM-dd HH:mm:ss", ErrorMessage = "DateTime must be in the format yyyy-MM-dd HH:mm:ss.")]
         public string StartTime { get; set; } = null!;
-        [Required(ErrorMessage = "End Time is required.")]
         [DateTimeFormat("yyyy-MM-dd HH:mm:ss", ErrorMessage = "DateTime must be in the format yyyy-MM-dd HH:mm:ss.")]
         public string? EndTime { get; set; }
         [Required(AllowEmptyStrings = false, ErrorMessage = "Match Status is required!")]
@@ -25,14 +24,19 @@ namespace BasketballManagerAPI.Dto.MatchDto {
             if (HomeTeamId == AwayTeamId)
                 yield return new ValidationResult("One team can only participate in match once!",
                     new[] { nameof(HomeTeamId) });
+            if(EndTime == null && Enum.TryParse<MatchStatus>(Status, out var matchStatus) && matchStatus == MatchStatus.Completed)
+                yield return new ValidationResult(
+                    "Competed Match does not have End Time.",
+                    new[] { nameof(Status) });
             if (StartTime != null && EndTime != null) {
                 
-                if (Enum.TryParse<MatchStatus>(Status, out var matchStatus) && matchStatus != MatchStatus.Completed)
+                if (Enum.TryParse<MatchStatus>(Status, out var competedMatchStatus) && competedMatchStatus != MatchStatus.Completed)
                 {
                     yield return new ValidationResult(
                         "Not Competed Match can not have End Time.",
                         new[] { nameof(Status) });
                 }
+
                 if (DateTime.TryParse(StartTime, out var startTime) && DateTime.TryParse(EndTime, out var endTime) && endTime <= startTime)
                 {
                     yield return new ValidationResult(

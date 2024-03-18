@@ -18,13 +18,6 @@ namespace BasketballManagerAPI.Configurations {
                 .HasForeignKey(p => p.TeamId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasMany(p => p.PlayerAwards)
-                .WithOne(p => p.Player)
-                .HasForeignKey(p => p.PlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-
-
         }
     }
 }

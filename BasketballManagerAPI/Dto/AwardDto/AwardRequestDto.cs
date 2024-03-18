@@ -11,6 +11,7 @@ namespace BasketballManagerAPI.Dto.AwardDto {
 
         [Required(ErrorMessage = "Date is required!")]
         [DateTimeFormat("yyyy-MM-dd", ErrorMessage = "Date Format must be in the format yyyy-MM-dd.")]
+        [NotFutureDate(ErrorMessage = "Date cannot be in the future!")]
         public string Date { get; set; } = null!;
 
         [Required(ErrorMessage = "isIndividualAward is required!")]

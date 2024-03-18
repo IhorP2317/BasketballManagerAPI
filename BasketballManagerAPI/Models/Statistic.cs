@@ -2,8 +2,8 @@
     public class Statistic {
         public Guid MatchId { get; set; }
         public Match Match { get; set; } = null!;
-        public Guid PlayerId { get; set; }
-        public Player Player { get; set; } = null!;
+        public Guid PlayerExperienceId { get; set; }
+        public PlayerExperience PlayerExperience { get; set; } = null!;
         public int  TimeUnit { get; set; }
         public int OnePointShotHitCount { get; set; }
         public int OnePointShotMissCount { get; set; }

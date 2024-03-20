@@ -1,7 +1,9 @@
 ﻿using BasketballManagerAPI.Configurations;
 using BasketballManagerAPI.Models;
 using BasketballManagerAPI.Services.Interfeces;
+using BasketballManagerAPI.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BasketballManagerAPI.Data {
     public class ApplicationDbContext:DbContext {
@@ -21,9 +23,11 @@ namespace BasketballManagerAPI.Data {
         public DbSet<Ticket> Tickets { get; set; }
 
         private readonly ICurrentUserService _currentUserService;
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService) : base(options) {
+        private readonly SuperAdminSeedData _superAdminSeedData;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService, IOptions<SuperAdminSeedData> superAdminSeedData) : base(options) {
             _currentUserService = currentUserService;
-            
+            _superAdminSeedData = superAdminSeedData.Value;
+
         }
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +46,7 @@ namespace BasketballManagerAPI.Data {
             modelBuilder.ApplyConfiguration(new TeamEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TicketEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new SuperAdminEntityConfiguration(_superAdminSeedData));
 
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -79,7 +84,8 @@ namespace BasketballManagerAPI.Data {
 
                         case EntityState.Added:
                             baseEntity.CreatedTime = DateTime.Now;
-                            baseEntity.CreatedById = Guid.Parse(_currentUserService.UserId);
+                            if (_currentUserService.UserId != null)
+                                baseEntity.CreatedById = Guid.Parse(_currentUserService.UserId);
                             if (baseEntity.Id == default)
                                 baseEntity.Id = Guid.NewGuid();
                             break;

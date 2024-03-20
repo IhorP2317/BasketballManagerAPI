@@ -42,13 +42,21 @@ namespace BasketballManagerAPI.Filters {
                 },
                 DomainLogicException domainEx => new ProblemDetails {
                     Title = "Domain logic validation error",
-                    Status = StatusCodes.Status409Conflict,
+                    Status = StatusCodes.Status422UnprocessableEntity,
                     Detail = domainEx.Message
                 },
                 BadRequestException badReqEx => new ProblemDetails {
                     Title = "Bad request",
                     Status = StatusCodes.Status400BadRequest,
                     Detail = badReqEx.Message
+                },
+                ApiException apiEx => new ProblemDetails {
+                    Title = "API error",
+                    Status = apiEx.StatusCode,
+                    Detail = apiEx.Response ?? apiEx.Message,
+                    Extensions = {
+                        ["headers"] = apiEx.Headers 
+                    }
                 },
                 _ => new ProblemDetails {
                     Title = "An unexpected error occurred",

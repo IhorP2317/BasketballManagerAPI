@@ -31,7 +31,9 @@ namespace BasketballManagerAPI.Controllers {
             return teams.IsNullOrEmpty() ? NoContent() : Ok(teams);
         }
         [HttpGet("filters")]
+        [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TeamResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAllTeamsAsync([FromQuery] TeamFiltersDto teamFiltersDto,CancellationToken cancellationToken) {
             var teams = await _teamService.GetAllTeamsWithFiltersAsync(teamFiltersDto, cancellationToken);

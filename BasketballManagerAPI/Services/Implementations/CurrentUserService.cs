@@ -9,6 +9,8 @@ namespace BasketballManagerAPI.Services.Implementations {
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public string? AccessTokenRaw => _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+            .ToString().Substring("Bearer ".Length).Trim();
         public string? UserId =>
             _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 

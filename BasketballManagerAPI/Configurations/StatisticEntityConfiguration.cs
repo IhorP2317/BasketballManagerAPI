@@ -14,7 +14,7 @@ namespace BasketballManagerAPI.Configurations {
             builder.HasOne(s => s.PlayerExperience)
                 .WithMany(p => p.Statistics)
                 .HasForeignKey(s => s.PlayerExperienceId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

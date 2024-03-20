@@ -8,8 +8,18 @@ namespace BasketballManagerAPI.Services.Interfeces
         Task<IEnumerable<PlayerStatisticDto>> GetAllPlayersStatisticByMatchAsync(Guid matchId,
             MatchStatisticFiltersDto matchStatisticFiltersDto, CancellationToken cancellationToken = default);
 
+        Task<IEnumerable<MatchTeamStatisticDto>> GetAllTeamsStatisticByMatchAsync(Guid matchId,
+            MatchStatisticFiltersDto matchStatisticFiltersDto, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<TotalTeamStatisticDto>> GetAllTotalTeamsStatisticByMatchAsync(Guid matchId, MatchStatisticFiltersDto matchStatisticFiltersDto,
+            CancellationToken cancellationToken = default);
+
        public Task<IEnumerable<TotalAnnuallyStatisticDto>> GetAllAnnuallyStatisticAsync(Guid playerId,
            TotalStatisticFiltersDto statisticFiltersDto,
+           CancellationToken cancellationToken = default);
+
+       Task<IEnumerable<PlayerImpactStatisticDto>> CalculatePlayerImpactInMatchAsync(Guid matchId,
+           MatchStatisticFiltersDto matchStatisticFiltersDto,
            CancellationToken cancellationToken = default);
 
        public Task<StatisticDto> GetStatisticAsync(Guid playerId, Guid matchId, int timeUnit,
@@ -23,7 +33,7 @@ namespace BasketballManagerAPI.Services.Interfeces
 
        public Task UpdateStatisticAsync(StatisticDto statisticDto, CancellationToken cancellationToken = default);
 
-       public  Task DeleteStatisticAsync(Guid playerId, Guid matchId, int timeUnit,
+       public  Task DeleteStatisticAsync(Guid playerExperienceId, Guid matchId, int timeUnit,
            CancellationToken cancellationToken);
     }
 }

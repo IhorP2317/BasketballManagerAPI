@@ -47,7 +47,7 @@ namespace BasketballManagerAPI.Controllers {
             var match = await _matchService.GetMatchDetailAsync(id, cancellationToken);
             return Ok(match);
         }
-        [HttpGet("{id:guid}/statistics")]
+        [HttpGet("{id:guid}/players-statistics")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PlayerStatisticDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -62,6 +62,52 @@ namespace BasketballManagerAPI.Controllers {
                 return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
             
         }
+        [HttpGet("{id:guid}/teams-statistics")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MatchTeamStatisticDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllTeamsStatisticByMatchAsync([FromRoute] Guid id,
+            [FromQuery] MatchStatisticFiltersDto matchStatisticFiltersDto,
+            CancellationToken cancellationToken) {
+
+            var statistics =
+                await _statisticService.GetAllTeamsStatisticByMatchAsync(id, matchStatisticFiltersDto, cancellationToken);
+            return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
+
+        }
+        [HttpGet("{id:guid}/total-teams-statistics")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TotalTeamStatisticDto>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAlGetAllTotalTeamsStatisticByMatchAsync([FromRoute] Guid id,
+            [FromQuery] MatchStatisticFiltersDto matchStatisticFiltersDto,
+            CancellationToken cancellationToken) {
+
+            var statistics =
+                await _statisticService.GetAllTotalTeamsStatisticByMatchAsync(id, matchStatisticFiltersDto, cancellationToken);
+            return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
+
+        }
+        [HttpGet("{id:guid}/players/impacts")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TotalTeamStatisticDto>))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CalculatePlayerImpactInMatchAsync([FromRoute] Guid id,
+            [FromQuery] MatchStatisticFiltersDto matchStatisticFiltersDto,
+            CancellationToken cancellationToken) {
+
+            var statistics =
+                await _statisticService.CalculatePlayerImpactInMatchAsync(id, matchStatisticFiltersDto, cancellationToken);
+            return statistics.IsNullOrEmpty() ? NoContent() : Ok(statistics); ;
+
+        }
+
         [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost]
         [ValidateModel]

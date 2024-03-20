@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Security.Helpers.ValidationAttributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Security.Dto.UserDto
 {
@@ -11,7 +12,7 @@ namespace Security.Dto.UserDto
         public string Email { get; set; } = null!;
         [Required(AllowEmptyStrings = false, ErrorMessage = "Password is required!")]
 
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$", ErrorMessage = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
+        [PasswordPolicy]
         public string Password { get; set; } = null!;
     }
 }

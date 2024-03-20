@@ -32,22 +32,10 @@ namespace BasketballManagerAPI.Services.Implementations {
                 throw new NotFoundException($"Match with id {matchId} is not found!");
             IQueryable<Statistic> statisticQuery = _context.Statistics.AsNoTracking()
                 .Include(s => s.PlayerExperience)
+                .ThenInclude(p => p.Player)
                 .Include(s => s.Match)
                 .Where(s => s.MatchId == matchId);
-            if (matchStatisticFiltersDto.TeamId.HasValue) {
-                statisticQuery = statisticQuery.Where(s => s.PlayerExperience.TeamId == matchStatisticFiltersDto.TeamId);
-            }
-
-            if (matchStatisticFiltersDto.TimeUnit.HasValue) {
-                if (matchStatisticFiltersDto.IsAccumulativeDisplayEnabled.GetValueOrDefault()) {
-                    statisticQuery = statisticQuery
-                        .Where(s => s.TimeUnit <= matchStatisticFiltersDto.TimeUnit.Value);
-                } else {
-                    statisticQuery = statisticQuery
-                        .Where(s => s.TimeUnit == matchStatisticFiltersDto.TimeUnit.Value);
-                }
-            }
-
+            statisticQuery = ApplyMatchStatisticFilters(statisticQuery, matchStatisticFiltersDto);
 
             var statistics = await statisticQuery.ToListAsync(cancellationToken);
 
@@ -55,11 +43,12 @@ namespace BasketballManagerAPI.Services.Implementations {
                 .GroupBy(s => s.PlayerExperience.PlayerId)
                 .Select(group => {
                     var player = group.First().PlayerExperience.Player;
+                    var teamId = group.First().PlayerExperience.TeamId;
                     var courtTime = group.Sum(g => g.CourtTime.Ticks);
 
                     return new PlayerStatisticDto {
                         FullName = $"{player.FirstName} {player.LastName}",
-                        TeamId = player.TeamId,
+                        TeamId = teamId,
                         Points = group.Sum(g => g.OnePointShotHitCount + (g.TwoPointShotHitCount * 2) + (g.ThreePointShotHitCount * 3)),
                         OnePointShotHit = group.Sum(g => g.OnePointShotHitCount),
                         OnePointShotMiss = group.Sum(g => g.OnePointShotMissCount),
@@ -80,7 +69,7 @@ namespace BasketballManagerAPI.Services.Implementations {
             return playerStatistics;
         }
 
-        public async Task<IEnumerable<MatchTeamStaticDto>> GetAllTeamsStatisticByMatchAsync(Guid matchId,
+        public async Task<IEnumerable<MatchTeamStatisticDto>> GetAllTeamsStatisticByMatchAsync(Guid matchId,
             MatchStatisticFiltersDto matchStatisticFiltersDto, CancellationToken cancellationToken = default) {
             var playerStatistics = await GetAllPlayersStatisticByMatchAsync(matchId, matchStatisticFiltersDto, cancellationToken);
 
@@ -93,7 +82,7 @@ namespace BasketballManagerAPI.Services.Implementations {
                     var team = teams.FirstOrDefault(t => t.Id == group.Key);
                     var teamName = team?.Name ?? "Unknown Team";
                     var teamStats = group.Select(x => x).ToList();
-                    return new MatchTeamStaticDto {
+                    return new MatchTeamStatisticDto {
                         Name = teamName,
                         Statistics = teamStats
                     };
@@ -222,8 +211,8 @@ namespace BasketballManagerAPI.Services.Implementations {
             return attempts > 0 ? (hits / attempts) * 100 : 0;
         }
 
-        public async Task<IEnumerable<TotalTeamStatisticDto>> GetAllTotalTeamsStatisticByMatchAsync(Guid matchId,
-            CancellationToken cancellationToken)
+        public async Task<IEnumerable<TotalTeamStatisticDto>> GetAllTotalTeamsStatisticByMatchAsync(Guid matchId, MatchStatisticFiltersDto matchStatisticFiltersDto,
+            CancellationToken cancellationToken = default)
         {
             if (!await _matchService.IsMatchExist(matchId, cancellationToken))
                 throw new NotFoundException($"Match with id {matchId} is not found!");
@@ -233,6 +222,7 @@ namespace BasketballManagerAPI.Services.Implementations {
                 .Include(s => s.PlayerExperience)
                 .ThenInclude(p => p.Team)
                 .Where(s => s.MatchId == matchId);
+            statisticsQuery = ApplyMatchStatisticFilters(statisticsQuery, matchStatisticFiltersDto);
             var statisticsData = await statisticsQuery.Select(s => new
             {
                 TeamName = s.PlayerExperience.Team.Name,
@@ -284,12 +274,12 @@ namespace BasketballManagerAPI.Services.Implementations {
         }
 
 
-        public async Task<IEnumerable<PlayerImpactStatisticDto>> CalculatePlayerImpactInMatchAsync(Guid matchId, CancellationToken cancellationToken) {
+        public async Task<IEnumerable<PlayerImpactStatisticDto>> CalculatePlayerImpactInMatchAsync(Guid matchId, MatchStatisticFiltersDto matchStatisticFiltersDto, CancellationToken cancellationToken =  default) {
            
-            var totalTeamStatistics = await GetAllTotalTeamsStatisticByMatchAsync(matchId, cancellationToken);
+            var totalTeamStatistics = await GetAllTotalTeamsStatisticByMatchAsync(matchId, matchStatisticFiltersDto, cancellationToken);
 
          
-            var playerStatistics = await GetAllPlayersStatisticByMatchAsync(matchId, new MatchStatisticFiltersDto(), cancellationToken);
+            var playerStatistics = await GetAllPlayersStatisticByMatchAsync(matchId, matchStatisticFiltersDto, cancellationToken);
 
             List<PlayerImpactStatisticDto> playerImpactStatistics = new List<PlayerImpactStatisticDto>();
 
@@ -324,6 +314,25 @@ namespace BasketballManagerAPI.Services.Implementations {
             }
 
             return playerImpactStatistics;
+        }
+
+        private IQueryable<Statistic> ApplyMatchStatisticFilters(IQueryable<Statistic> statisticsQuery,
+            MatchStatisticFiltersDto matchStatisticFiltersDto)
+        {
+            if (matchStatisticFiltersDto.TeamId.HasValue) {
+                statisticsQuery = statisticsQuery.Where(s => s.PlayerExperience.TeamId == matchStatisticFiltersDto.TeamId);
+            }
+
+            if (matchStatisticFiltersDto.TimeUnit.HasValue) {
+                if (matchStatisticFiltersDto.IsAccumulativeDisplayEnabled.GetValueOrDefault()) {
+                    statisticsQuery = statisticsQuery
+                        .Where(s => s.TimeUnit <= matchStatisticFiltersDto.TimeUnit.Value);
+                } else {
+                    statisticsQuery = statisticsQuery
+                        .Where(s => s.TimeUnit == matchStatisticFiltersDto.TimeUnit.Value);
+                }
+            }
+            return statisticsQuery;
         }
 
         public async Task<StatisticDto> GetStatisticAsync(Guid playerExperienceId, Guid matchId, int timeUnit, CancellationToken cancellationToken = default) {
@@ -375,11 +384,32 @@ namespace BasketballManagerAPI.Services.Implementations {
         }
 
         public async Task UpdateStatisticAsync(StatisticDto statisticDto, CancellationToken cancellationToken = default) {
+
+            var match = await _context.Matches.FindAsync(statisticDto.MatchId, cancellationToken);
+            if (match == null)
+                throw new NotFoundException("The match of created statistic does not exist!");
+            var playerExperience =
+                await _context.PlayerExperiences.FindAsync(statisticDto.PlayerExperienceId, cancellationToken);
+            if (playerExperience == null)
+                throw new NotFoundException("The player experience of created statistic does not exist!");
             var foundedStatistic = await _context.Statistics.FindAsync(new object[] { statisticDto.MatchId, statisticDto.PlayerExperienceId, statisticDto.TimeUnit.GetValueOrDefault() }, cancellationToken);
             if (foundedStatistic == null) {
                 throw new NotFoundException($"Statistic with match id {statisticDto.MatchId}, player id {statisticDto.PlayerExperienceId} and time Unit {statisticDto.TimeUnit.GetValueOrDefault()} not found.");
             }
+            if (playerExperience.TeamId != match.AwayTeamId && playerExperience.TeamId != match.HomeTeamId)
+                throw new DomainLogicException(
+                    $"Can not create Statistic to player that did not be a part of teams, that had played  match with id {match.Id}!");
+            var playerExperienceStartDate = new DateTime(playerExperience.StartDate.Year, playerExperience.StartDate.Month, playerExperience.StartDate.Day);
 
+            DateTime? playerExperienceEndDate = null;
+            if (playerExperience.EndDate.HasValue) {
+                playerExperienceEndDate = new DateTime(playerExperience.EndDate.Value.Year, playerExperience.EndDate.Value.Month, playerExperience.EndDate.Value.Day);
+            }
+
+
+            if (match.StartTime < playerExperienceStartDate || (playerExperienceEndDate.HasValue && match.StartTime > playerExperienceEndDate.Value)) {
+                throw new DomainLogicException($"Match start time {match.StartTime} is outside the player experience range from {playerExperienceStartDate} to {playerExperienceEndDate?.ToString() ?? "now"}.");
+            }
             _mapper.Map(statisticDto, foundedStatistic);
             await _context.SaveChangesAsync(cancellationToken);
         }
@@ -388,7 +418,7 @@ namespace BasketballManagerAPI.Services.Implementations {
             CancellationToken cancellationToken) {
             var foundedStatistic = await _context.Statistics.FindAsync(new object[] { matchId, playerExperienceId, timeUnit }, cancellationToken);
             if (foundedStatistic == null) {
-                throw new NotFoundException($"Statistic with match id {matchId}, player id {playerExperienceId} and time Unit {timeUnit} not found.");
+                throw new NotFoundException($"Statistic with match id {matchId}, player experience id {playerExperienceId} and time Unit {timeUnit} not found.");
             }
 
             _context.Statistics.Remove(foundedStatistic);

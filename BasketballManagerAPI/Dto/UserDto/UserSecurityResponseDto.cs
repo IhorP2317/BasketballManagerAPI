@@ -1,5 +1,5 @@
-﻿namespace Security.Dto.UserDto {
-    public class UserResponseDto {
+﻿namespace BasketballManagerAPI.Dto.UserDto {
+    public class UserSecurityResponseDto {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;

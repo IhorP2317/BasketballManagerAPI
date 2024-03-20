@@ -58,14 +58,14 @@ namespace BasketballManagerAPI.Controllers {
             return NoContent();
         }
         [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpDelete("matches/{matchId:guid}/players/{playerId:guid}/{timeUnit:int}")]
+        [HttpDelete("matches/{matchId:guid}/players/experiences/{experienceId:guid}/{timeUnit:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteStatisticAsync([FromRoute] Guid matchId, [FromRoute] Guid playerId,
+        public async Task<IActionResult> DeleteStatisticAsync([FromRoute] Guid matchId, [FromRoute] Guid experienceId,
         [FromRoute] int timeUnit, CancellationToken cancellationToken) {
-            if (!await _statisticService.IsStatisticExistAsync(matchId, playerId, timeUnit, cancellationToken))
+            if (!await _statisticService.IsStatisticExistAsync(matchId, experienceId, timeUnit, cancellationToken))
                 return NotFound();
-            await _statisticService.DeleteStatisticAsync(playerId, matchId, timeUnit, cancellationToken);
+            await _statisticService.DeleteStatisticAsync(experienceId, matchId, timeUnit, cancellationToken);
             return NoContent();
         }
     }

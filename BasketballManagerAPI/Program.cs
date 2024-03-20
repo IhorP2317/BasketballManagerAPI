@@ -18,8 +18,9 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
         .Enrich.FromLogContext()
 );
 // Add services to the container.
-builder.Services.RegisterCustomServices();
+builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.ConfigureAuth(builder.Configuration);
+builder.Services.ConfigureHttpClient(builder.Configuration);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

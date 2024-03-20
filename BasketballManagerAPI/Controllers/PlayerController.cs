@@ -101,7 +101,7 @@ namespace BasketballManagerAPI.Controllers {
             await _playerService.UpdatePlayerTeamAsync(id, playerDto.NewTeamId, cancellationToken);
             return NoContent();
         }
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = "User,SuperAdmin,Admin")]
         [HttpPatch("{id}/avatar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

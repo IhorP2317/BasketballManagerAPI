@@ -59,7 +59,11 @@ namespace Security.Services.Implementations
             if (!sendingResult)
                 throw new AuthException("Failed to send an email", StatusCodes.Status500InternalServerError);
 
-            return _mapper.Map<UserResponseDto>(userSignUpDto);
+            var createdUser = await _userManager.FindByEmailAsync(user.Email);
+            var createdUserResponseDto = _mapper.Map<UserResponseDto>(createdUser);
+
+            createdUserResponseDto.Role = (await _userManager.GetRolesAsync(createdUser)).First();
+            return createdUserResponseDto;
         }
 
         

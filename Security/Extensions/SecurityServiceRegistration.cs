@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Services.Implementations;
 using BasketballManagerAPI.Services.Interfeces;
@@ -68,6 +69,7 @@ namespace Security.Extensions {
                     };
                 });
         }
+        
 
     }
 

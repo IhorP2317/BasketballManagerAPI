@@ -1,4 +1,6 @@
-﻿using BasketballManagerAPI.Dto.UserDto;
+﻿using BasketballManagerAPI.Dto.OrderDto;
+using BasketballManagerAPI.Dto.TicketDto;
+using BasketballManagerAPI.Dto.UserDto;
 using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Helpers;
 using BasketballManagerAPI.Services.Interfaces;
@@ -11,10 +13,14 @@ namespace BasketballManagerAPI.Controllers {
     [Route("api/users")]
     public class UserController:ControllerBase {
         private readonly IUserService _userService;
+        private readonly IOrderService _orderService;
+        private readonly ITicketService _ticketService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IOrderService orderService, ITicketService ticketService)
         {
             _userService = userService;
+            _orderService = orderService;
+            _ticketService = ticketService;
         }
 
         [HttpGet]
@@ -39,7 +45,27 @@ namespace BasketballManagerAPI.Controllers {
             var user = await _userService.GetUserByIdAsync(id, cancellationToken);
             return Ok(user);
         }
-        
+        [HttpGet("{id}/orders")]
+        [Authorize(Roles = "User,SuperAdmin, Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetOrdersByUserIdAsync([FromRoute] Guid id, CancellationToken cancellationToken) {
+            var orders = await _orderService.GetAllOrdersByUserIdAsync(id, cancellationToken);
+            return orders.IsNullOrEmpty() ? NoContent() : Ok(orders);
+        }
+        [HttpGet("{id}/tickets")]
+        [Authorize(Roles = "User,SuperAdmin, Admin")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TicketResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        public async Task<IActionResult> GetTicketsByUserIdAsync([FromRoute] Guid id, [FromQuery] TicketFiltersDto ticketFiltersDto, CancellationToken cancellationToken) {
+            var tickets = await _ticketService.GetAllTicketsByUserIdAsync(id, ticketFiltersDto, cancellationToken);
+            return tickets.Items.IsNullOrEmpty() ? NoContent() : Ok(tickets);
+        }
+
         [HttpPost("register")]
         [AllowAnonymous]
         [ValidateModel]
@@ -90,6 +116,20 @@ namespace BasketballManagerAPI.Controllers {
             [FromForm] IFormFile picture,
             CancellationToken cancellationToken) {
             await _userService.UpdateUserAvatarAsync(id, picture, cancellationToken);
+            return NoContent();
+
+        }
+        [Authorize(Roles = "User,SuperAdmin,Admin")]
+        [HttpPatch("{id}/balance")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUserBalanceAsync([FromRoute] Guid id,
+            [FromQuery] decimal balance,
+            CancellationToken cancellationToken)
+        {
+            await _userService.UpdateUserBalanceAsync(id, balance, cancellationToken);
             return NoContent();
 
         }

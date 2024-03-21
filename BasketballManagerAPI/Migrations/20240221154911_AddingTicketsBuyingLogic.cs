@@ -49,7 +49,7 @@ namespace BasketballManagerAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -100,7 +100,7 @@ namespace BasketballManagerAPI.Migrations
                     table.ForeignKey(
                         name: "FK_Tickets_Transactions_TransactionId",
                         column: x => x.TransactionId,
-                        principalTable: "Transactions",
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                 });
@@ -113,11 +113,11 @@ namespace BasketballManagerAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_TransactionId",
                 table: "Tickets",
-                column: "TransactionId");
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_UserId",
-                table: "Transactions",
+                table: "Orders",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -140,7 +140,7 @@ namespace BasketballManagerAPI.Migrations
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Users");

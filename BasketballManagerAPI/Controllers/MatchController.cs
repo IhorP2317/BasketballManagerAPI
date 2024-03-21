@@ -1,9 +1,11 @@
 ﻿using BasketballManagerAPI.Dto.MatchDto;
 using BasketballManagerAPI.Dto.StatisticDto;
 using BasketballManagerAPI.Dto.TeamDto;
+using BasketballManagerAPI.Dto.TicketDto;
 using BasketballManagerAPI.Filters;
 using BasketballManagerAPI.Helpers;
 using BasketballManagerAPI.Services.Implementations;
+using BasketballManagerAPI.Services.Interfaces;
 using BasketballManagerAPI.Services.Interfeces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +16,13 @@ namespace BasketballManagerAPI.Controllers {
     [Route("api/matches")]
     public class MatchController:ControllerBase {
         private readonly IMatchService _matchService;
-        private readonly IStatisticService _statisticService;   
-        public MatchController(IMatchService matchService, IStatisticService statisticService)
+        private readonly IStatisticService _statisticService;  
+        private readonly ITicketService _ticketService;
+        public MatchController(IMatchService matchService, IStatisticService statisticService, ITicketService ticketService)
         {
             _matchService = matchService;
             _statisticService = statisticService;
+            _ticketService = ticketService;
         }
         [HttpGet]
         [ValidateModel]
@@ -39,6 +43,7 @@ namespace BasketballManagerAPI.Controllers {
             var match = await _matchService.GetMatchAsync(id, cancellationToken);
             return Ok(match);
         }
+        
 
         [HttpGet("{id:guid}/details")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MatchResponseDto))]
@@ -46,6 +51,17 @@ namespace BasketballManagerAPI.Controllers {
         public async Task<IActionResult> GetMatchDetailAsync([FromRoute] Guid id, CancellationToken cancellationToken) {
             var match = await _matchService.GetMatchDetailAsync(id, cancellationToken);
             return Ok(match);
+        }
+
+        [HttpGet("{id:guid}/tickets")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TicketResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        public async Task<IActionResult> GetAllTicketsByMatchIdAsync([FromRoute] Guid id, [FromQuery] TicketFiltersDto ticketFiltersDto,  CancellationToken cancellationToken) {
+            var tickets = await _ticketService.GetAllTicketsByMatchIdAsync(id, ticketFiltersDto, cancellationToken);
+            return Ok(tickets);
         }
         [HttpGet("{id:guid}/players-statistics")]
         [ValidateModel]

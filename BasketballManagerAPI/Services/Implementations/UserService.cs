@@ -185,6 +185,18 @@ namespace BasketballManagerAPI.Services.Implementations {
 
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task UpdateUserBalanceAsync(Guid id, decimal balance, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            if (user == null)
+                throw new NotFoundException($"User with id {id} does not exist!");
+            if (balance <= 0m)
+                throw new BadRequestException($"Balance should be positive value!");
+            user.Balance  += balance;
+            await _context.SaveChangesAsync(cancellationToken);
+
+        }
         public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default) {
             if (!await IsUserExistsAsync(id, cancellationToken))
                 throw new NotFoundException($"User with id {id} does not exist!");

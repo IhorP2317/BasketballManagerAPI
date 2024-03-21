@@ -9,7 +9,9 @@ namespace BasketballManagerAPI.Models {
         public MatchStatus Status { get; set; }
         public Guid HomeTeamId { get; set; }
         public Team HomeTeam { get; set; } = null!;
-
+        public int SectionCount { get; set; }
+        public int RowCount { get; set; }
+        public int SeatCount { get; set; }
         public Guid AwayTeamId { get; set; }
         public Team AwayTeam { get; set; } = null!;
         public int? HomeTeamScore { get; set; }

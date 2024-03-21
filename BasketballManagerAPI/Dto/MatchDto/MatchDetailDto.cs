@@ -13,7 +13,9 @@ namespace BasketballManagerAPI.Dto.MatchDto {
         public int? HomeTeamScore { get; set; }
         public int? AwayMatchScore { get; set; }
         public string Status { get; set; } = null!;
-
+        public int SectionCount { get; set; }
+        public int RowCount { get; set; }
+        public int SeatCount { get; set; }
         public Guid AwayTeamId { get; set; }
         public TeamResponseDto AwayTeam { get; set; } = null!;
         public ICollection<StatisticDto.StatisticDto> Statistics { get; set; } = null!;

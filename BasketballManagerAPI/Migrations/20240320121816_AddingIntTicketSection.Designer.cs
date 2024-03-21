@@ -4,6 +4,7 @@ using BasketballManagerAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BasketballManagerAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240320121816_AddingIntTicketSection")]
+    partial class AddingIntTicketSection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,15 +214,6 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset?>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("RowCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SeatCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SectionCount")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -233,38 +227,6 @@ namespace BasketballManagerAPI.Migrations
                     b.HasIndex("HomeTeamId");
 
                     b.ToTable("Matches");
-                });
-
-            modelBuilder.Entity("BasketballManagerAPI.Models.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("ModifiedById")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("ModifiedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Player", b =>
@@ -496,9 +458,6 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<DateTimeOffset?>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
@@ -511,13 +470,51 @@ namespace BasketballManagerAPI.Migrations
                     b.Property<int>("Section")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MatchId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("TransactionId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("BasketballManagerAPI.Models.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ModifiedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.User", b =>
@@ -652,17 +649,6 @@ namespace BasketballManagerAPI.Migrations
                     b.Navigation("HomeTeam");
                 });
 
-            modelBuilder.Entity("BasketballManagerAPI.Models.Order", b =>
-                {
-                    b.HasOne("BasketballManagerAPI.Models.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("BasketballManagerAPI.Models.Player", b =>
                 {
                     b.HasOne("BasketballManagerAPI.Models.Team", "Team")
@@ -738,14 +724,25 @@ namespace BasketballManagerAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BasketballManagerAPI.Models.Order", "Order")
+                    b.HasOne("BasketballManagerAPI.Models.Transaction", "Transaction")
                         .WithMany("Tickets")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Match");
 
-                    b.Navigation("Order");
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("BasketballManagerAPI.Models.Transaction", b =>
+                {
+                    b.HasOne("BasketballManagerAPI.Models.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BasketballManagerAPI.Models.Award", b =>
@@ -772,11 +769,6 @@ namespace BasketballManagerAPI.Migrations
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("BasketballManagerAPI.Models.Order", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
             modelBuilder.Entity("BasketballManagerAPI.Models.Player", b =>
                 {
                     b.Navigation("PlayerExperiences");
@@ -800,9 +792,14 @@ namespace BasketballManagerAPI.Migrations
                     b.Navigation("Players");
                 });
 
+            modelBuilder.Entity("BasketballManagerAPI.Models.Transaction", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("BasketballManagerAPI.Models.User", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

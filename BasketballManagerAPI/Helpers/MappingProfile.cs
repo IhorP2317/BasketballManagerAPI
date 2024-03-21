@@ -10,7 +10,7 @@ using BasketballManagerAPI.Dto.PlayerDto;
 using BasketballManagerAPI.Dto.StatisticDto;
 using BasketballManagerAPI.Dto.TeamDto;
 using BasketballManagerAPI.Dto.TicketDto;
-using BasketballManagerAPI.Dto.TransactionDto;
+using BasketballManagerAPI.Dto.OrderDto;
 using BasketballManagerAPI.Dto.UserDto;
 using BasketballManagerAPI.Models;
 
@@ -25,7 +25,7 @@ namespace BasketballManagerAPI.Helpers {
             ConfigureMatchEntityMapping();
             ConfigurePlayerExperienceEntityMapping();
             ConfigureCoachExperienceEntityMapping();
-            ConfigureTransactionEntityMapping();
+            ConfigureOrderEntityMapping();
             ConfigureUserEntityMapping();
             ConfigurePlayerEntityMapping();
             ConfigureCoachEntityMapping();
@@ -51,6 +51,13 @@ namespace BasketballManagerAPI.Helpers {
         private void ConfigureTicketEntityMapping() {
             CreateMap<Ticket, TicketResponseDto>().ReverseMap();
             CreateMap<Ticket, TicketRequestDto>().ReverseMap();
+            CreateMap<PagedList<Ticket>, PagedList<TicketResponseDto>>()
+                .ConvertUsing(
+                    (src, dest, context) => {
+                        var mappedItems = context.Mapper.Map<List<TicketResponseDto>>(src.Items);
+                        return new PagedList<TicketResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                    }
+                );
         }
 
         private void ConfigureAwardEntityMapping() {
@@ -149,13 +156,12 @@ namespace BasketballManagerAPI.Helpers {
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
         }
 
-        private void ConfigureTransactionEntityMapping() {
-            CreateMap<Transaction, TransactionResponseDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
-
-            CreateMap<TransactionRequestDto, Transaction>()
-                .ForMember(dest => dest.Status,
-                    opt => opt.MapFrom(src => Enum.Parse(typeof(TransactionStatus), src.Status, true)));
+        private void ConfigureOrderEntityMapping()
+        {
+            CreateMap<Order, OrderResponseDto>()
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Tickets.Sum(t => t.Price)));
+            CreateMap<OrderRequestDto, Order>()
+;
         }
 
         private void ConfigureUserEntityMapping() {

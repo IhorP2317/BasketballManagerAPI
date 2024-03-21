@@ -18,7 +18,7 @@ namespace BasketballManagerAPI.Data {
         public DbSet<PlayerAward> PlayerAwards { get; set; }
         public DbSet<CoachAward> CoachAwards { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         public DbSet<Ticket> Tickets { get; set; }
 
@@ -42,7 +42,7 @@ namespace BasketballManagerAPI.Data {
             modelBuilder.ApplyConfiguration(new PlayerExperienceEntityConfiguration());
             modelBuilder.ApplyConfiguration(new MatchEntityConfiguration());
             modelBuilder.ApplyConfiguration(new StatisticEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new TransactionEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TeamEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TicketEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());

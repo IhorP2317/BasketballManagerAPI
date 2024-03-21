@@ -62,6 +62,8 @@ namespace BasketballManagerAPI.Extensions {
             serviceCollection.AddScoped<ICoachExperienceService, CoachExperienceService>();
             serviceCollection.AddScoped<IStaffAwardServiceFactory, StaffAwardServiceFactory>();
             serviceCollection.AddScoped<IUserService, UserService>();
+            serviceCollection.AddScoped<IOrderService, OrderService>();
+            serviceCollection.AddScoped<ITicketService, TicketService>();
             serviceCollection.AddScoped<PlayerAwardService>();
             serviceCollection.AddScoped<CoachAwardService>();
             serviceCollection.Configure<SecurityHttpClientConstants>(configuration.GetSection("SecurityHttpClient"));

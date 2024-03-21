@@ -12,10 +12,10 @@ namespace BasketballManagerAPI.Configurations {
                 .WithMany(m => m.Tickets)
                 .HasForeignKey(t => t.MatchId);
 
-            builder.HasOne(t => t.Transaction)
+            builder.HasOne(t => t.Order)
                 .WithMany(t => t.Tickets)
-                .HasForeignKey(t => t.TransactionId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(t => t.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

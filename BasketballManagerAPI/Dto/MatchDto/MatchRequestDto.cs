@@ -19,26 +19,39 @@ namespace BasketballManagerAPI.Dto.MatchDto {
         public Guid HomeTeamId { get; set; }
         [NonEmptyGuid(ErrorMessage = "Away Team ID must be a non-empty GUID.")]
         public Guid AwayTeamId { get; set; }
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
+        [Required(ErrorMessage = "Section Count is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Section Count must be positive number!")]
+        public int? SectionCount { get; set; }
+        [Required(ErrorMessage = "Row Count  is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Row Count must be positive number!")]
+        public int? RowCount { get; set; }
+        [Required(ErrorMessage = "Seat Count Time is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Seat Count must be positive number!")]
+        public int? SeatCount { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
             if (HomeTeamId == AwayTeamId)
                 yield return new ValidationResult("One team can only participate in match once!",
                     new[] { nameof(HomeTeamId) });
-            if(EndTime == null && Enum.TryParse<MatchStatus>(Status, out var matchStatus) && matchStatus == MatchStatus.Completed)
+            if (EndTime == null && Enum.TryParse<MatchStatus>(Status, out var matchStatus) && matchStatus == MatchStatus.Completed)
                 yield return new ValidationResult(
                     "Competed Match does not have End Time.",
                     new[] { nameof(Status) });
+            if (Enum.TryParse<MatchStatus>(Status, out var scheduledMatchStatus) && scheduledMatchStatus == MatchStatus.Scheduled ) {
+                if(DateTime.TryParse(StartTime, out var scheduledStartTime) &&  scheduledStartTime < DateTime.UtcNow) {
+                    yield return new ValidationResult(
+                        "Scheduled match should have Start time in the future! ",
+                        new[] { nameof(StartTime) });
+                }
+            }
             if (StartTime != null && EndTime != null) {
-                
-                if (Enum.TryParse<MatchStatus>(Status, out var competedMatchStatus) && competedMatchStatus != MatchStatus.Completed)
-                {
+
+                if (Enum.TryParse<MatchStatus>(Status, out var competedMatchStatus) && competedMatchStatus != MatchStatus.Completed) {
                     yield return new ValidationResult(
                         "Not Competed Match can not have End Time.",
                         new[] { nameof(Status) });
                 }
 
-                if (DateTime.TryParse(StartTime, out var startTime) && DateTime.TryParse(EndTime, out var endTime) && endTime <= startTime)
-                {
+                if (DateTime.TryParse(StartTime, out var startTime) && DateTime.TryParse(EndTime, out var endTime) && endTime <= startTime) {
                     yield return new ValidationResult(
                         "End Time must be after Start Time.",
                         new[] { nameof(EndTime) });

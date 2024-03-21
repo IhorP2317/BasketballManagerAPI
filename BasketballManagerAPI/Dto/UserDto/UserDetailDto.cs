@@ -1,4 +1,4 @@
-﻿using BasketballManagerAPI.Dto.TransactionDto;
+﻿using BasketballManagerAPI.Dto.OrderDto;
 using BasketballManagerAPI.Models;
 
 namespace BasketballManagerAPI.Dto.UserDto {
@@ -9,6 +9,6 @@ namespace BasketballManagerAPI.Dto.UserDto {
         public decimal Balance { get; set; }
         public string PhotoPath { get; set; } = null!;
         public string Role { get; set; } = null!;
-        public ICollection<TransactionResponseDto> Transactions { get; set; } = null!;
+        public ICollection<OrderResponseDto> Orders { get; set; } = null!;
     }
 }

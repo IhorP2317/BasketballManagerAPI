@@ -11,6 +11,6 @@ namespace BasketballManagerAPI.Models {
         public decimal Balance { get; set; } 
         public string? PhotoPath { get; set; } 
         public Role Role { get; set; }
-        public ICollection<Transaction> Transactions { get; set; } = null!;
+        public ICollection<Order> Orders { get; set; } = null!;
     }
 }

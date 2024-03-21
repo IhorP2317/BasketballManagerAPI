@@ -13,7 +13,7 @@ namespace BasketballManagerAPI.Configurations
             builder.Property(u => u.Balance)
                 .HasColumnType("decimal(10,2)");
 
-            builder.HasMany(u => u.Transactions)
+            builder.HasMany(u => u.Orders)
                 .WithOne(t => t.User)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);

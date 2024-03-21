@@ -12,7 +12,7 @@ namespace BasketballManagerAPI.Migrations
         {
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                table: "Transactions",
+                table: "Orders",
                 type: "int",
                 nullable: false,
                 oldClrType: typeof(string),
@@ -40,7 +40,7 @@ namespace BasketballManagerAPI.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                table: "Transactions",
+                table: "Orders",
                 type: "nvarchar(max)",
                 nullable: false,
                 oldClrType: typeof(int),
